@@ -53,17 +53,4 @@ plt.title('Sepal length vs. sepal width')
 plt.legend(['Setosa', 'Versicolor', 'Virginica'])
 plt.show()'''
 
-### Task 1a
-N = 50
-N_training = 30
-
-setosa_sepal_training = setosa_sepal[:N_training]
-setosa_sepal_testing = setosa_sepal[N_training:]
-setosa_petal_training = setosa_petal[:N_training]
-setosa_petal_testing = setosa_petal[N_training:]
-
-versicolor_sepal_training = versicolor_sepal[:N_training]
-versicolor_sepal_testing = versicolor_sepal[N_training:]
-versicolor_petal_training = versicolor_petal[:N_training]
-versicolor_petal_testing = versicolor_petal[N_training:]
 
