@@ -12,29 +12,23 @@ with open("Iris_TTT4275/class_2") as f:
 with open("Iris_TTT4275/class_3") as f:
     virginica_data = f.read().splitlines()
 
-setosa_sepal = [] # [Length, width] for each element
-setosa_petal = [] # [Length, width] for each element
+setosa = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
 
 for flower in setosa_data:
     flower = flower.split(',')
-    setosa_sepal.append([float(flower[0]), float(flower[1])])
-    setosa_petal.append([float(flower[2]), float(flower[3])])
+    setosa.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
 
-versicolor_sepal = [] # [Length, width] for each element
-versicolor_petal = [] # [Length, width] for each element
+versicolor = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
 
 for flower in versicolor_data:
     flower = flower.split(',')
-    versicolor_sepal.append([float(flower[0]), float(flower[1])])
-    versicolor_petal.append([float(flower[2]), float(flower[3])])
+    versicolor.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
 
-virginica_sepal = []
-virginica_petal = []
+virginica = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
 
 for flower in virginica_data:
     flower = flower.split(',')
-    virginica_sepal.append([float(flower[0]), float(flower[1])])
-    virginica_petal.append([float(flower[2]), float(flower[3])])
+    virginica.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
 
 ### ------------------------------
 ### ------------------------------
@@ -42,12 +36,11 @@ for flower in virginica_data:
 ### ------------------------------
 ### ------------------------------
 
-'''
 # Plotting the sepal length vs. sepal width for the three classes
 plt.figure(1)
-plt.plot([x[0] for x in setosa_sepal], [x[1] for x in setosa_sepal], 'ro', label='Setosa')
-plt.plot([x[0] for x in versicolor_sepal], [x[1] for x in versicolor_sepal], 'bo', label='Versicolor')
-plt.plot([x[0] for x in virginica_sepal], [x[1] for x in virginica_sepal], 'go', label='Virginica')
+plt.plot([x[0] for x in setosa], [x[1] for x in setosa], 'ro', label='Setosa')
+plt.plot([x[0] for x in versicolor], [x[1] for x in versicolor], 'bo', label='Versicolor')
+plt.plot([x[0] for x in virginica], [x[1] for x in virginica], 'go', label='Virginica')
 plt.xlabel('Sepal length (cm)')
 plt.ylabel('Sepal width (cm)')
 plt.title('Sepal length vs. sepal width')
@@ -55,33 +48,26 @@ plt.legend(['Setosa', 'Versicolor', 'Virginica'])
 
 # Plotting the petal length vs. petal width for the three classes
 plt.figure(2)
-plt.plot([x[0] for x in setosa_petal], [x[1] for x in setosa_petal], 'ro', label='Setosa')
-plt.plot([x[0] for x in versicolor_petal], [x[1] for x in versicolor_petal], 'bo', label='Versicolor')
-plt.plot([x[0] for x in virginica_petal], [x[1] for x in virginica_petal], 'go', label='Virginica')
+plt.plot([x[2] for x in setosa], [x[3] for x in setosa], 'ro', label='Setosa')
+plt.plot([x[2] for x in versicolor], [x[3] for x in versicolor], 'bo', label='Versicolor')
+plt.plot([x[2] for x in virginica], [x[3] for x in virginica], 'go', label='Virginica')
 plt.xlabel('Petal length (cm)')
 plt.ylabel('Petal width (cm)')
 plt.title('Petal length vs. petal width')
 plt.legend(['Setosa', 'Versicolor', 'Virginica'])
 
 plt.show()
-'''
 
 ### Task 1a
 N = 50
 N_TRAINING = 30
 
-setosa_sepal_training = setosa_sepal[:N_TRAINING]
-setosa_sepal_testing = setosa_sepal[N_TRAINING:]
-setosa_petal_training = setosa_petal[:N_TRAINING]
-setosa_petal_testing = setosa_petal[N_TRAINING:]
+setosa_training = setosa[:N_TRAINING]
+setosa_testing = setosa[N_TRAINING:]
 
-versicolor_sepal_training = versicolor_sepal[:N_TRAINING]
-versicolor_sepal_testing = versicolor_sepal[N_TRAINING:]
-versicolor_petal_training = versicolor_petal[:N_TRAINING]
-versicolor_petal_testing = versicolor_petal[N_TRAINING:]
+versicolor_training = versicolor[:N_TRAINING]
+versicolor_testing = versicolor[N_TRAINING:]
 
-virginica_sepal_training = virginica_sepal[:N_TRAINING]
-virginica_sepal_testing = virginica_sepal[N_TRAINING:]
-virginica_petal_training = virginica_petal[:N_TRAINING]
-virginica_petal_testing = virginica_petal[N_TRAINING:]
+virginica_training = virginica[:N_TRAINING]
+virginica_testing = virginica[N_TRAINING:]
 
