@@ -42,8 +42,9 @@ for flower in virginica_data:
 ### ------------------------------
 ### ------------------------------
 
+'''
 # Plotting the sepal length vs. sepal width for the three classes
-'''plt.figure(1)
+plt.figure(1)
 plt.plot([x[0] for x in setosa_sepal], [x[1] for x in setosa_sepal], 'ro', label='Setosa')
 plt.plot([x[0] for x in versicolor_sepal], [x[1] for x in versicolor_sepal], 'bo', label='Versicolor')
 plt.plot([x[0] for x in virginica_sepal], [x[1] for x in virginica_sepal], 'go', label='Virginica')
@@ -51,7 +52,19 @@ plt.xlabel('Sepal length (cm)')
 plt.ylabel('Sepal width (cm)')
 plt.title('Sepal length vs. sepal width')
 plt.legend(['Setosa', 'Versicolor', 'Virginica'])
-plt.show()'''
+
+# Plotting the petal length vs. petal width for the three classes
+plt.figure(2)
+plt.plot([x[0] for x in setosa_petal], [x[1] for x in setosa_petal], 'ro', label='Setosa')
+plt.plot([x[0] for x in versicolor_petal], [x[1] for x in versicolor_petal], 'bo', label='Versicolor')
+plt.plot([x[0] for x in virginica_petal], [x[1] for x in virginica_petal], 'go', label='Virginica')
+plt.xlabel('Petal length (cm)')
+plt.ylabel('Petal width (cm)')
+plt.title('Petal length vs. petal width')
+plt.legend(['Setosa', 'Versicolor', 'Virginica'])
+
+plt.show()
+'''
 
 ### Task 1a
 N = 50
