@@ -7,4 +7,4 @@ Multiplying this with a weighting matrix W. Will also have an offset vector w0.
 
 Output vector:
     g = Wx + w0
-This is used to 
+This is used both to train the weights in W and w0, and later to classify the input.
