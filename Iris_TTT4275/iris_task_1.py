@@ -79,32 +79,45 @@ virginica_testing = virginica[N_TRAINING:]
 
 ### Task 1b
 
+# Creating a weighting matrix and a bias vector
+
 w_matrix = np.ones((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
-w0 = 1 # Bias
+w0 = np.ones(N_CLASSES) # Bias
 # The discriminant vector will be [W w0][x^T 1]^T
+
+w_matrix_bias = [w_matrix, w0]
 
 T = [[1, 0, 0], 
      [0, 1, 0], 
      [0, 0, 1]] # Target vectors
 
 
-alpha = 0.2
+alpha = 0.1
 
 #print(np.matmul(w_matrix, setosa_training[0]))
-
-
 
 # Add iterations here when needed
 mse_matrix = np.zeros((N_CLASSES, np.shape(setosa)[1])) # MSE for the three classes and all features
 
-#for sample in setosa_training:
-sample = setosa_training[0]
-i = 0
+# Training the network for all training inputs, this is one iteration
+for number in range(3*N_TRAINING):
+    if number < 30:
+        t = T[0]
+        x = setosa_training[number]
+    elif 30 <= number < 60:
+        t = T[1]
+        x = versicolor_training[number-N_TRAINING]
+    elif 60 <= number:
+        t = T[2]
+        x = virginica_training[number-2*N_TRAINING]
 
-if i < 30:
-    t = T[0]
-    z = np.matmul(w_matrix, np.transpose(sample))
+    x_with_bias = [np.transpose(x), 1]
+
+    z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
     g = 1/(1+np.exp(-z))
     u = np.multiply((g-t), g, (1-g))
-    print(u)
-    print(sample)
+
+    e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
+
+    w_matrix_bias[0] = w_matrix_bias[0] - alpha*e[0]
+    w_matrix_bias[1] = w_matrix_bias[1] - alpha*e[1]
