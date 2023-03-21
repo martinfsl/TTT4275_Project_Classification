@@ -36,6 +36,44 @@ for flower in virginica_data:
     flower = flower.split(',')
     virginica.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
 
+all_samples = []
+
+for element in setosa:
+    all_samples.append(element)
+for element in versicolor:
+    all_samples.append(element)
+for element in virginica:
+    all_samples.append(element)
+
+max_sepal_length = max([x[0] for x in all_samples])
+min_sepal_length = min([x[0] for x in all_samples])
+max_sepal_width = max([x[1] for x in all_samples])
+min_sepal_width = min([x[1] for x in all_samples])
+
+max_petal_length = max([x[2] for x in all_samples])
+min_petal_length = min([x[2] for x in all_samples])
+max_petal_width = max([x[3] for x in all_samples])
+min_petal_width = min([x[3] for x in all_samples])
+
+# Normalizing the data
+for flower in setosa:
+    flower[0] = (flower[0] - min_sepal_length)/(max_sepal_length - min_sepal_length)
+    flower[1] = (flower[1] - min_sepal_width)/(max_sepal_width - min_sepal_width)
+    flower[2] = (flower[2] - min_petal_length)/(max_petal_length - min_petal_length)
+    flower[3] = (flower[3] - min_petal_width)/(max_petal_width - min_petal_width)
+
+for flower in versicolor:
+    flower[0] = (flower[0] - min_sepal_length)/(max_sepal_length - min_sepal_length)
+    flower[1] = (flower[1] - min_sepal_width)/(max_sepal_width - min_sepal_width)
+    flower[2] = (flower[2] - min_petal_length)/(max_petal_length - min_petal_length)
+    flower[3] = (flower[3] - min_petal_width)/(max_petal_width - min_petal_width)
+
+for flower in virginica:
+    flower[0] = (flower[0] - min_sepal_length)/(max_sepal_length - min_sepal_length)
+    flower[1] = (flower[1] - min_sepal_width)/(max_sepal_width - min_sepal_width)
+    flower[2] = (flower[2] - min_petal_length)/(max_petal_length - min_petal_length)
+    flower[3] = (flower[3] - min_petal_width)/(max_petal_width - min_petal_width)
+
 ### ------------------------------
 ### ------------------------------
 ### -- Here starts the analysis --
@@ -96,7 +134,7 @@ T = [[1, 0, 0],
 #print(np.matmul(w_matrix, setosa_training[0]))
 
 # Training the network for all training inputs for 100 iterations
-M = 10000
+M = 1000
 
 training_set = []
 
@@ -149,9 +187,9 @@ for m in range(M):
     w_matrix_bias[0] = w_matrix_bias[0] - alpha*mse_matrix_gradient[0]
     w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
 
-    print(f"w_matrix after {m+1} iterations: {w_matrix_bias}")
+    #print(f"w_matrix after {m+1} iterations: {w_matrix_bias}")
 
-test = [np.transpose(setosa_testing[0]), 1]
-#print("test: ", test)
+test = [np.transpose(versicolor_testing[19]), 1]
+print("test: ", test)
 g = 1/(1+np.exp(-np.matmul(w_matrix_bias[0], test[0]) - w_matrix_bias[1]*test[1]))
 print("g: ", g, " class: ", np.argmax(g))
