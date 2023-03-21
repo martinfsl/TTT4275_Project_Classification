@@ -36,6 +36,8 @@ for flower in virginica_data:
     flower = flower.split(',')
     virginica.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
 
+# Normalizing the data
+
 all_samples = []
 
 for element in setosa:
@@ -55,7 +57,6 @@ min_petal_length = min([x[2] for x in all_samples])
 max_petal_width = max([x[3] for x in all_samples])
 min_petal_width = min([x[3] for x in all_samples])
 
-# Normalizing the data
 for flower in setosa:
     flower[0] = (flower[0] - min_sepal_length)/(max_sepal_length - min_sepal_length)
     flower[1] = (flower[1] - min_sepal_width)/(max_sepal_width - min_sepal_width)
@@ -119,9 +120,11 @@ virginica_testing = virginica[N_TRAINING:]
 
 # Creating a weighting matrix and a bias vector
 
-w_matrix = np.zeros((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
+#w_matrix = 0.5*np.ones((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
+#w0 = 0.5*np.ones(N_CLASSES) # Bias
 
-w0 = np.zeros(N_CLASSES) # Bias
+w_matrix = np.random.random((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
+w0 = np.random.random(N_CLASSES) # Bias
 # The discriminant vector will be [W w0][x^T 1]^T
 
 w_matrix_bias = [w_matrix, w0]
@@ -133,8 +136,8 @@ T = [[1, 0, 0],
 
 #print(np.matmul(w_matrix, setosa_training[0]))
 
-# Training the network for all training inputs for 100 iterations
-M = 1000
+# Training the network for all training inputs for M iterations
+M = 5000
 
 training_set = []
 
@@ -145,7 +148,7 @@ for versicolor_data in versicolor_training:
 for virginica_data in virginica_training:
     training_set.append([virginica_data, 2])
 
-alpha = 0.05
+alpha = 0.3
 
 #print("w_matrix before: ", w_matrix_bias)
 
@@ -187,13 +190,9 @@ for m in range(M):
     w_matrix_bias[0] = w_matrix_bias[0] - alpha*mse_matrix_gradient[0]
     w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
 
+    print(f"Iteration: {m+1}")
+
     #print(f"w_matrix after {m+1} iterations: {w_matrix_bias}")
-
-test = [np.transpose(versicolor_testing[19]), 1]
-print("test: ", test)
-g = 1/(1+np.exp(-np.matmul(w_matrix_bias[0], test[0]) - w_matrix_bias[1]*test[1]))
-print("g: ", g, " class: ", np.argmax(g))
-
 
 # Creating a set for testing
 testing_set = []
@@ -209,6 +208,9 @@ np.random.shuffle(testing_set)
 
 wrong = 0
 
+# confusion_matrix[true_class][predicted_class]
+confusion_matrix = np.zeros((N_CLASSES, N_CLASSES))
+
 for test_sample in testing_set:
     true_class = test_sample[1]
 
@@ -216,7 +218,10 @@ for test_sample in testing_set:
     g = 1/(1+np.exp(-np.matmul(w_matrix_bias[0], sample[0]) - w_matrix_bias[1]*sample[1]))
     predicted_class = np.argmax(g)
 
+    confusion_matrix[true_class][predicted_class] += 1
+
     if predicted_class != true_class:
         wrong += 1
     
 print(f"Wrong: {wrong}, Total: {len(testing_set)}")
+print(f"Confusion matrix: \n{confusion_matrix}")
