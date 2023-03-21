@@ -81,8 +81,9 @@ virginica_testing = virginica[N_TRAINING:]
 
 # Creating a weighting matrix and a bias vector
 
-w_matrix = np.ones((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
-w0 = np.ones(N_CLASSES) # Bias
+w_matrix = np.zeros((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
+
+w0 = np.zeros(N_CLASSES) # Bias
 # The discriminant vector will be [W w0][x^T 1]^T
 
 w_matrix_bias = [w_matrix, w0]
@@ -95,39 +96,35 @@ T = [[1, 0, 0],
 #print(np.matmul(w_matrix, setosa_training[0]))
 
 # Training the network for all training inputs for 100 iterations
-M = 100
+M = 10000
 
-#training_set = []
+training_set = []
 
-#for setosa in setosa_training:
-#    training_set.append([setosa, 0])
-#for versicolor in versicolor_training:
-#    training_set.append([versicolor, 1])
-#for virginica in virginica_training:
-#    training_set.append([virginica, 2])
+for setosa_data in setosa_training:
+    training_set.append([setosa_data, 0])
+for versicolor_data in versicolor_training:
+    training_set.append([versicolor_data, 1])
+for virginica_data in virginica_training:
+    training_set.append([virginica_data, 2])
 
-# Randomize the training set
-#np.random.shuffle(training_set)
+alpha = 0.05
 
-alpha = 0.02
+#print("w_matrix before: ", w_matrix_bias)
 
 for m in range(M):
 
-    mse_matrix_gradient = [np.zeros((N_CLASSES, np.shape(setosa)[1])), np.zeros(N_CLASSES)] # MSE for the three classes and all features
-        
-    # Training the network for all training inputs, this is one iteration
-    for number in range(N_TRAINING):
-        if m < M/3:
-            t = T[0]
-            x = setosa_training[number]
-        elif M/3 <= m < 2*M/3:
-            t = T[1]
-            x = versicolor_training[number]
-        elif 2*M/3 <= m:
-            t = T[2]
-            x = virginica_training[number]
+    # Randomize the training set for each iteration
+    np.random.shuffle(training_set)
 
-        
+    mse_matrix_gradient = [np.zeros((N_CLASSES, np.shape(setosa)[1])), np.zeros(N_CLASSES)] # MSE for the three classes and all features
+    
+    # Training the network for all training inputs, shuffled
+    for data in training_set:
+
+        t = T[data[1]]
+        x = data[0]
+
+        x_with_bias = [np.transpose(x), 1]
 
         #print("x: ", x_with_bias)
 
@@ -147,20 +144,14 @@ for m in range(M):
         #print("mse before, ", mse_matrix_gradient)
         mse_matrix_gradient[0] += e[0] # Adding the error of the weights
         mse_matrix_gradient[1] += e[1] # Adding the error of the bias
-
         #print("mse_gradient: ", mse_matrix_gradient)
-
-    print("w_matrix before: ", w_matrix_bias)
 
     w_matrix_bias[0] = w_matrix_bias[0] - alpha*mse_matrix_gradient[0]
     w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
 
-    print("w_matrix after: ", w_matrix_bias)
+    print(f"w_matrix after {m+1} iterations: {w_matrix_bias}")
 
-    test = setosa_testing[0]
-    test_with_bias = [np.transpose(test), 1]
-    z = np.matmul(w_matrix_bias[0], np.transpose(test_with_bias[0])) + w_matrix_bias[1]*test_with_bias[1]
-    g = 1/(1+np.exp(-z))
-    print("g: ", g, " class: ", np.argmax(g))
-
-# Arange so that the training set comes in random order, not a structured one
+test = [np.transpose(setosa_testing[0]), 1]
+#print("test: ", test)
+g = 1/(1+np.exp(-np.matmul(w_matrix_bias[0], test[0]) - w_matrix_bias[1]*test[1]))
+print("g: ", g, " class: ", np.argmax(g))
