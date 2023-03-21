@@ -92,32 +92,75 @@ T = [[1, 0, 0],
      [0, 0, 1]] # Target vectors
 
 
-alpha = 0.1
-
 #print(np.matmul(w_matrix, setosa_training[0]))
 
-# Add iterations here when needed
-mse_matrix = np.zeros((N_CLASSES, np.shape(setosa)[1])) # MSE for the three classes and all features
+# Training the network for all training inputs for 100 iterations
+M = 100
 
-# Training the network for all training inputs, this is one iteration
-for number in range(3*N_TRAINING):
-    if number < 30:
-        t = T[0]
-        x = setosa_training[number]
-    elif 30 <= number < 60:
-        t = T[1]
-        x = versicolor_training[number-N_TRAINING]
-    elif 60 <= number:
-        t = T[2]
-        x = virginica_training[number-2*N_TRAINING]
+#training_set = []
 
-    x_with_bias = [np.transpose(x), 1]
+#for setosa in setosa_training:
+#    training_set.append([setosa, 0])
+#for versicolor in versicolor_training:
+#    training_set.append([versicolor, 1])
+#for virginica in virginica_training:
+#    training_set.append([virginica, 2])
 
-    z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
+# Randomize the training set
+#np.random.shuffle(training_set)
+
+alpha = 0.02
+
+for m in range(M):
+
+    mse_matrix_gradient = [np.zeros((N_CLASSES, np.shape(setosa)[1])), np.zeros(N_CLASSES)] # MSE for the three classes and all features
+        
+    # Training the network for all training inputs, this is one iteration
+    for number in range(N_TRAINING):
+        if m < M/3:
+            t = T[0]
+            x = setosa_training[number]
+        elif M/3 <= m < 2*M/3:
+            t = T[1]
+            x = versicolor_training[number]
+        elif 2*M/3 <= m:
+            t = T[2]
+            x = virginica_training[number]
+
+        x_with_bias = [np.transpose(x), 1]
+
+        #print("x: ", x_with_bias)
+
+        z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
+        g = 1/(1+np.exp(-z))
+        #u = np.multiply((g-t), g, (1-g))
+        u = np.multiply(np.multiply((g-t), g), (1-g))
+
+        #print("z: ", z)
+        #print("g: ", g)
+        #print("u: ", u)
+
+        # Need change below here:
+
+        e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
+        #print("e, ", e)
+        #print("mse before, ", mse_matrix_gradient)
+        mse_matrix_gradient[0] += e[0] # Adding the error of the weights
+        mse_matrix_gradient[1] += e[1] # Adding the error of the bias
+
+        #print("mse_gradient: ", mse_matrix_gradient)
+
+    print("w_matrix before: ", w_matrix_bias)
+
+    w_matrix_bias[0] = w_matrix_bias[0] - alpha*mse_matrix_gradient[0]
+    w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
+
+    print("w_matrix after: ", w_matrix_bias)
+
+    test = setosa_testing[0]
+    test_with_bias = [np.transpose(test), 1]
+    z = np.matmul(w_matrix_bias[0], np.transpose(test_with_bias[0])) + w_matrix_bias[1]*test_with_bias[1]
     g = 1/(1+np.exp(-z))
-    u = np.multiply((g-t), g, (1-g))
+    print("g: ", g, " class: ", np.argmax(g))
 
-    e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
-
-    w_matrix_bias[0] = w_matrix_bias[0] - alpha*e[0]
-    w_matrix_bias[1] = w_matrix_bias[1] - alpha*e[1]
+# Arange so that the training set comes in random order, not a structured one
