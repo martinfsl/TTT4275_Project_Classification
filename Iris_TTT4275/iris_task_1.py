@@ -127,7 +127,7 @@ for m in range(M):
             t = T[2]
             x = virginica_training[number]
 
-        x_with_bias = [np.transpose(x), 1]
+        
 
         #print("x: ", x_with_bias)
 
