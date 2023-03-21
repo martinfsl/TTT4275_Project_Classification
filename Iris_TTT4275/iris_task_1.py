@@ -167,21 +167,21 @@ for m in range(M):
 
         x_with_bias = [np.transpose(x), 1]
 
-        print("x: ", x_with_bias)
+        #print("x: ", x_with_bias)
 
         z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
         g = 1/(1+np.exp(-z))
         #u = np.multiply((g-t), g, (1-g))
         u = np.multiply(np.multiply((g-t), g), (1-g))
 
-        print("z: ", z)
-        print("g: ", g)
-        print("u: ", u)
+        #print("z: ", z)
+        #print("g: ", g)
+        #print("u: ", u)
 
         # Need change below here:
 
         e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
-        print("e, ", e)
+        #print("e, ", e)
         #print("mse before, ", mse_matrix_gradient)
         mse_matrix_gradient[0] += e[0] # Adding the error of the weights
         mse_matrix_gradient[1] += e[1] # Adding the error of the bias
