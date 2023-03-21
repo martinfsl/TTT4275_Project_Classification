@@ -193,3 +193,30 @@ test = [np.transpose(versicolor_testing[19]), 1]
 print("test: ", test)
 g = 1/(1+np.exp(-np.matmul(w_matrix_bias[0], test[0]) - w_matrix_bias[1]*test[1]))
 print("g: ", g, " class: ", np.argmax(g))
+
+
+# Creating a set for testing
+testing_set = []
+
+for setosa_data in setosa_testing:
+    testing_set.append([setosa_data, 0])
+for versicolor_data in versicolor_testing:
+    testing_set.append([versicolor_data, 1])
+for virginica_data in virginica_testing:
+    testing_set.append([virginica_data, 2])
+
+np.random.shuffle(testing_set)
+
+wrong = 0
+
+for test_sample in testing_set:
+    true_class = test_sample[1]
+
+    sample = [np.transpose(test_sample[0]), 1]
+    g = 1/(1+np.exp(-np.matmul(w_matrix_bias[0], sample[0]) - w_matrix_bias[1]*sample[1]))
+    predicted_class = np.argmax(g)
+
+    if predicted_class != true_class:
+        wrong += 1
+    
+print(f"Wrong: {wrong}, Total: {len(testing_set)}")
