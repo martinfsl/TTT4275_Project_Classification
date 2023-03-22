@@ -36,44 +36,36 @@ for flower in virginica_data:
     flower = flower.split(',')
     virginica.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
 
-# Normalizing the data
-
+# Collecting all the samples in one list (Used for normalization)
 all_samples = []
+for i in range(N):
+    all_samples.append(setosa[i])
+    all_samples.append(versicolor[i])
+    all_samples.append(virginica[i])
 
-for element in setosa:
-    all_samples.append(element)
-for element in versicolor:
-    all_samples.append(element)
-for element in virginica:
-    all_samples.append(element)
-
+'''
+Ex. of finding the max and min of a specific feature
 max_sepal_length = max([x[0] for x in all_samples])
 min_sepal_length = min([x[0] for x in all_samples])
-max_sepal_width = max([x[1] for x in all_samples])
-min_sepal_width = min([x[1] for x in all_samples])
-
-max_petal_length = max([x[2] for x in all_samples])
-min_petal_length = min([x[2] for x in all_samples])
-max_petal_width = max([x[3] for x in all_samples])
-min_petal_width = min([x[3] for x in all_samples])
-
+'''
+# Normalizing the data
 for flower in setosa:
-    flower[0] = (flower[0] - min_sepal_length)/(max_sepal_length - min_sepal_length)
-    flower[1] = (flower[1] - min_sepal_width)/(max_sepal_width - min_sepal_width)
-    flower[2] = (flower[2] - min_petal_length)/(max_petal_length - min_petal_length)
-    flower[3] = (flower[3] - min_petal_width)/(max_petal_width - min_petal_width)
+    flower[0] = (flower[0] - min([x[0] for x in all_samples]))/(max([x[0] for x in all_samples]) - min([x[0] for x in all_samples]))
+    flower[1] = (flower[1] - min([x[1] for x in all_samples]))/(max([x[1] for x in all_samples]) - min([x[1] for x in all_samples]))
+    flower[2] = (flower[2] - min([x[2] for x in all_samples]))/(max([x[2] for x in all_samples]) - min([x[2] for x in all_samples]))
+    flower[3] = (flower[3] - min([x[3] for x in all_samples]))/(max([x[3] for x in all_samples]) - min([x[3] for x in all_samples]))
 
 for flower in versicolor:
-    flower[0] = (flower[0] - min_sepal_length)/(max_sepal_length - min_sepal_length)
-    flower[1] = (flower[1] - min_sepal_width)/(max_sepal_width - min_sepal_width)
-    flower[2] = (flower[2] - min_petal_length)/(max_petal_length - min_petal_length)
-    flower[3] = (flower[3] - min_petal_width)/(max_petal_width - min_petal_width)
+    flower[0] = (flower[0] - min([x[0] for x in all_samples]))/(max([x[0] for x in all_samples]) - min([x[0] for x in all_samples]))
+    flower[1] = (flower[1] - min([x[1] for x in all_samples]))/(max([x[1] for x in all_samples]) - min([x[1] for x in all_samples]))
+    flower[2] = (flower[2] - min([x[2] for x in all_samples]))/(max([x[2] for x in all_samples]) - min([x[2] for x in all_samples]))
+    flower[3] = (flower[3] - min([x[3] for x in all_samples]))/(max([x[3] for x in all_samples]) - min([x[3] for x in all_samples]))
 
 for flower in virginica:
-    flower[0] = (flower[0] - min_sepal_length)/(max_sepal_length - min_sepal_length)
-    flower[1] = (flower[1] - min_sepal_width)/(max_sepal_width - min_sepal_width)
-    flower[2] = (flower[2] - min_petal_length)/(max_petal_length - min_petal_length)
-    flower[3] = (flower[3] - min_petal_width)/(max_petal_width - min_petal_width)
+    flower[0] = (flower[0] - min([x[0] for x in all_samples]))/(max([x[0] for x in all_samples]) - min([x[0] for x in all_samples]))
+    flower[1] = (flower[1] - min([x[1] for x in all_samples]))/(max([x[1] for x in all_samples]) - min([x[1] for x in all_samples]))
+    flower[2] = (flower[2] - min([x[2] for x in all_samples]))/(max([x[2] for x in all_samples]) - min([x[2] for x in all_samples]))
+    flower[3] = (flower[3] - min([x[3] for x in all_samples]))/(max([x[3] for x in all_samples]) - min([x[3] for x in all_samples]))
 
 ### ------------------------------
 ### ------------------------------
@@ -120,9 +112,6 @@ virginica_testing = virginica[N_TRAINING:]
 
 # Creating a weighting matrix and a bias vector
 
-#w_matrix = 0.5*np.ones((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
-#w0 = 0.5*np.ones(N_CLASSES) # Bias
-
 w_matrix = np.random.random((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
 w0 = np.random.random(N_CLASSES) # Bias
 # The discriminant vector will be [W w0][x^T 1]^T
@@ -132,9 +121,6 @@ w_matrix_bias = [w_matrix, w0]
 T = [[1, 0, 0], 
      [0, 1, 0], 
      [0, 0, 1]] # Target vectors
-
-
-#print(np.matmul(w_matrix, setosa_training[0]))
 
 # Training the network for all training inputs for M iterations
 M = 5000
@@ -150,51 +136,28 @@ for virginica_data in virginica_training:
 
 alpha = 0.3
 
-#print("w_matrix before: ", w_matrix_bias)
-
 for m in range(M):
-
-    # Randomize the training set for each iteration
-    np.random.shuffle(training_set)
-
+    np.random.shuffle(training_set)# Randomize the training set for each iteration
     mse_matrix_gradient = [np.zeros((N_CLASSES, np.shape(setosa)[1])), np.zeros(N_CLASSES)] # MSE for the three classes and all features
     
     # Training the network for all training inputs, shuffled
     for data in training_set:
-
         t = T[data[1]]
         x = data[0]
-
         x_with_bias = [np.transpose(x), 1]
-
-        #print("x: ", x_with_bias)
 
         z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
         g = 1/(1+np.exp(-z))
-        #u = np.multiply((g-t), g, (1-g))
         u = np.multiply(np.multiply((g-t), g), (1-g))
-
-        #print("z: ", z)
-        #print("g: ", g)
-        #print("u: ", u)
-
-        # Need change below here:
-
         e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
-        #print("e, ", e)
-        #print("mse before, ", mse_matrix_gradient)
+
         mse_matrix_gradient[0] += e[0] # Adding the error of the weights
         mse_matrix_gradient[1] += e[1] # Adding the error of the bias
-
-        #print("mse_gradient: ", mse_matrix_gradient)
 
     w_matrix_bias[0] = w_matrix_bias[0] - alpha*mse_matrix_gradient[0]
     w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
 
     print(f"Iteration: {m+1}")
-
-
-    #print(f"w_matrix after {m+1} iterations: {w_matrix_bias}")
 
 # Creating a set for testing
 testing_set = []
@@ -224,6 +187,6 @@ for test_sample in testing_set:
 
     if predicted_class != true_class:
         wrong += 1
-    
+
 print(f"Wrong: {wrong}, Total: {len(testing_set)}")
 print(f"Confusion matrix: \n{confusion_matrix}")
