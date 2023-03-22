@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 N_CLASSES = 3
 N = 50
-N_TRAINING = 30
 
 # Load the data for the Iris Setosa class
 # The data lines are stores in the order: sepal length, sepal width, petal length, petal width - All in cm
@@ -60,27 +59,6 @@ normalization(setosa, all_samples)
 normalization(versicolor, all_samples)
 normalization(virginica, all_samples)
 
-'''
-# Normalizing the data
-for flower in setosa:
-    flower[0] = (flower[0] - min([x[0] for x in all_samples]))/(max([x[0] for x in all_samples]) - min([x[0] for x in all_samples]))
-    flower[1] = (flower[1] - min([x[1] for x in all_samples]))/(max([x[1] for x in all_samples]) - min([x[1] for x in all_samples]))
-    flower[2] = (flower[2] - min([x[2] for x in all_samples]))/(max([x[2] for x in all_samples]) - min([x[2] for x in all_samples]))
-    flower[3] = (flower[3] - min([x[3] for x in all_samples]))/(max([x[3] for x in all_samples]) - min([x[3] for x in all_samples]))
-
-for flower in versicolor:
-    flower[0] = (flower[0] - min([x[0] for x in all_samples]))/(max([x[0] for x in all_samples]) - min([x[0] for x in all_samples]))
-    flower[1] = (flower[1] - min([x[1] for x in all_samples]))/(max([x[1] for x in all_samples]) - min([x[1] for x in all_samples]))
-    flower[2] = (flower[2] - min([x[2] for x in all_samples]))/(max([x[2] for x in all_samples]) - min([x[2] for x in all_samples]))
-    flower[3] = (flower[3] - min([x[3] for x in all_samples]))/(max([x[3] for x in all_samples]) - min([x[3] for x in all_samples]))
-
-for flower in virginica:
-    flower[0] = (flower[0] - min([x[0] for x in all_samples]))/(max([x[0] for x in all_samples]) - min([x[0] for x in all_samples]))
-    flower[1] = (flower[1] - min([x[1] for x in all_samples]))/(max([x[1] for x in all_samples]) - min([x[1] for x in all_samples]))
-    flower[2] = (flower[2] - min([x[2] for x in all_samples]))/(max([x[2] for x in all_samples]) - min([x[2] for x in all_samples]))
-    flower[3] = (flower[3] - min([x[3] for x in all_samples]))/(max([x[3] for x in all_samples]) - min([x[3] for x in all_samples]))
-'''
-
 ### ------------------------------
 ### ------------------------------
 ### -- Here starts the analysis --
@@ -113,6 +91,8 @@ plt.show()
 
 ### Task 1a
 
+N_TRAINING = 30
+
 setosa_training = setosa[:N_TRAINING]
 setosa_testing = setosa[N_TRAINING:]
 
@@ -124,20 +104,44 @@ virginica_testing = virginica[N_TRAINING:]
 
 ### Task 1b
 
-# Creating a weighting matrix and a bias vector
-
-w_matrix = np.random.random((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
-w0 = np.random.random(N_CLASSES) # Bias
-# The discriminant vector will be [W w0][x^T 1]^T
-
-w_matrix_bias = [w_matrix, w0]
-
 T = [[1, 0, 0], 
      [0, 1, 0], 
      [0, 0, 1]] # Target vectors
 
+def training(set_for_training, M = 5000, alpha = 0.3):
+    # Creating a weighting matrix and a bias vector
+    w_matrix = np.random.random((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
+    w0 = np.random.random(N_CLASSES) # Bias
+    # The discriminant vector will be [W w0][x^T 1]^T
+    w_matrix_bias = [w_matrix, w0]
+
+    for m in range(M):
+        np.random.shuffle(set_for_training)# Randomize the training set for each iteration
+        mse_matrix_gradient = [np.zeros((N_CLASSES, np.shape(setosa)[1])), np.zeros(N_CLASSES)] # MSE for the three classes and all features
+        
+        # Training the network for all training inputs, shuffled
+        for data in set_for_training:
+            t = T[data[1]]
+            x = data[0]
+            x_with_bias = [np.transpose(x), 1]
+
+            z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
+            g = 1/(1+np.exp(-z))
+            u = np.multiply(np.multiply((g-t), g), (1-g))
+            e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
+
+            mse_matrix_gradient[0] += e[0] # Adding the error of the weights
+            mse_matrix_gradient[1] += e[1] # Adding the error of the bias
+
+        w_matrix_bias[0] = w_matrix_bias[0] - alpha*mse_matrix_gradient[0]
+        w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
+
+        print(f"Iteration: {m+1}")
+    return w_matrix_bias
+
 # Training the network for all training inputs for M iterations
-M = 5000
+iterations = 5000
+learning_rate = 0.3
 
 training_set = []
 
@@ -148,30 +152,7 @@ for versicolor_data in versicolor_training:
 for virginica_data in virginica_training:
     training_set.append([virginica_data, 2])
 
-alpha = 0.3
-
-for m in range(M):
-    np.random.shuffle(training_set)# Randomize the training set for each iteration
-    mse_matrix_gradient = [np.zeros((N_CLASSES, np.shape(setosa)[1])), np.zeros(N_CLASSES)] # MSE for the three classes and all features
-    
-    # Training the network for all training inputs, shuffled
-    for data in training_set:
-        t = T[data[1]]
-        x = data[0]
-        x_with_bias = [np.transpose(x), 1]
-
-        z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
-        g = 1/(1+np.exp(-z))
-        u = np.multiply(np.multiply((g-t), g), (1-g))
-        e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
-
-        mse_matrix_gradient[0] += e[0] # Adding the error of the weights
-        mse_matrix_gradient[1] += e[1] # Adding the error of the bias
-
-    w_matrix_bias[0] = w_matrix_bias[0] - alpha*mse_matrix_gradient[0]
-    w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
-
-    print(f"Iteration: {m+1}")
+weights = training(training_set, iterations, learning_rate)
 
 # Creating a set for testing
 testing_set = []
@@ -194,7 +175,7 @@ for test_sample in testing_set:
     true_class = test_sample[1]
 
     sample = [np.transpose(test_sample[0]), 1]
-    g = 1/(1+np.exp(-np.matmul(w_matrix_bias[0], sample[0]) - w_matrix_bias[1]*sample[1]))
+    g = 1/(1+np.exp(-np.matmul(weights[0], sample[0]) - weights[1]*sample[1]))
     predicted_class = np.argmax(g)
 
     confusion_matrix[true_class][predicted_class] += 1
