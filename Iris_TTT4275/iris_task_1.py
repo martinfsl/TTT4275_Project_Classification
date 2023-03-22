@@ -48,6 +48,19 @@ Ex. of finding the max and min of a specific feature
 max_sepal_length = max([x[0] for x in all_samples])
 min_sepal_length = min([x[0] for x in all_samples])
 '''
+
+def normalization(flower_set, samples):
+    for flower in flower_set:
+        flower[0] = (flower[0] - min([x[0] for x in all_samples]))/(max([x[0] for x in all_samples]) - min([x[0] for x in all_samples]))
+        flower[1] = (flower[1] - min([x[1] for x in all_samples]))/(max([x[1] for x in all_samples]) - min([x[1] for x in all_samples]))
+        flower[2] = (flower[2] - min([x[2] for x in all_samples]))/(max([x[2] for x in all_samples]) - min([x[2] for x in all_samples]))
+        flower[3] = (flower[3] - min([x[3] for x in all_samples]))/(max([x[3] for x in all_samples]) - min([x[3] for x in all_samples]))
+
+normalization(setosa, all_samples)
+normalization(versicolor, all_samples)
+normalization(virginica, all_samples)
+
+'''
 # Normalizing the data
 for flower in setosa:
     flower[0] = (flower[0] - min([x[0] for x in all_samples]))/(max([x[0] for x in all_samples]) - min([x[0] for x in all_samples]))
@@ -66,6 +79,7 @@ for flower in virginica:
     flower[1] = (flower[1] - min([x[1] for x in all_samples]))/(max([x[1] for x in all_samples]) - min([x[1] for x in all_samples]))
     flower[2] = (flower[2] - min([x[2] for x in all_samples]))/(max([x[2] for x in all_samples]) - min([x[2] for x in all_samples]))
     flower[3] = (flower[3] - min([x[3] for x in all_samples]))/(max([x[3] for x in all_samples]) - min([x[3] for x in all_samples]))
+'''
 
 ### ------------------------------
 ### ------------------------------
