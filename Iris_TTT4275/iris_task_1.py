@@ -87,7 +87,7 @@ for flower in virginica:
 ### ------------------------------
 ### ------------------------------
 
-'''
+
 # Plotting the sepal length vs. sepal width for the three classes
 plt.figure(1)
 plt.plot([x[0] for x in setosa], [x[1] for x in setosa], 'ro', label='Setosa')
@@ -109,7 +109,7 @@ plt.title('Petal length vs. petal width')
 plt.legend(['Setosa', 'Versicolor', 'Virginica'])
 
 plt.show()
-'''
+
 
 ### Task 1a
 
