@@ -85,7 +85,7 @@ def plotting(setosa_set, versicolor_set, virginica_set, title1, title2):
 
     plt.show()
 
-plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
+#plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
 
 ### ------------------------------
 ### Task 1b
@@ -131,42 +131,84 @@ def training(set_for_training, M = 5000, alpha = 0.3):
 iterations = 3000
 learning_rate = 0.3
 
-N_TRAINING = 30
+def training_30_first_samples():
+    N_TRAINING = 30
 
-setosa_training = setosa[:N_TRAINING]
-setosa_testing = setosa[N_TRAINING:]
-versicolor_training = versicolor[:N_TRAINING]
-versicolor_testing = versicolor[N_TRAINING:]
-virginica_training = virginica[:N_TRAINING]
-virginica_testing = virginica[N_TRAINING:]
+    setosa_training = setosa[:N_TRAINING]
+    setosa_testing = setosa[N_TRAINING:]
+    versicolor_training = versicolor[:N_TRAINING]
+    versicolor_testing = versicolor[N_TRAINING:]
+    virginica_training = virginica[:N_TRAINING]
+    virginica_testing = virginica[N_TRAINING:]
 
-training_set = []
-for setosa_data in setosa_training: training_set.append([setosa_data, 0])
-for versicolor_data in versicolor_training: training_set.append([versicolor_data, 1])
-for virginica_data in virginica_training: training_set.append([virginica_data, 2])
+    training_set = []
+    for setosa_data in setosa_training: training_set.append([setosa_data, 0])
+    for versicolor_data in versicolor_training: training_set.append([versicolor_data, 1])
+    for virginica_data in virginica_training: training_set.append([virginica_data, 2])
 
-weights = training(training_set, iterations, learning_rate)
+    weights = training(training_set, iterations, learning_rate)
 
-# Creating a set for testing
-testing_set = []
+    # Creating a set for testing
+    testing_set = []
+    for setosa_data in setosa_testing: testing_set.append([setosa_data, 0])
+    for versicolor_data in versicolor_testing: testing_set.append([versicolor_data, 1])
+    for virginica_data in virginica_testing: testing_set.append([virginica_data, 2])
 
-for setosa_data in setosa_testing: testing_set.append([setosa_data, 0])
-for versicolor_data in versicolor_testing: testing_set.append([versicolor_data, 1])
-for virginica_data in virginica_testing: testing_set.append([virginica_data, 2])
+    wrong = 0
+    confusion_matrix = np.zeros((N_CLASSES, N_CLASSES))
 
-np.random.shuffle(testing_set)
-wrong = 0
-confusion_matrix = np.zeros((N_CLASSES, N_CLASSES))
+    for test_sample in testing_set:
+        true_class = test_sample[1]
+        sample = [np.transpose(test_sample[0]), 1]
+        g = 1/(1+np.exp(-np.matmul(weights[0], sample[0]) - weights[1]*sample[1]))
+        predicted_class = np.argmax(g)
+        confusion_matrix[true_class][predicted_class] += 1
+        if predicted_class != true_class:
+            wrong += 1
 
-for test_sample in testing_set:
-    true_class = test_sample[1]
-    sample = [np.transpose(test_sample[0]), 1]
-    g = 1/(1+np.exp(-np.matmul(weights[0], sample[0]) - weights[1]*sample[1]))
-    predicted_class = np.argmax(g)
-    confusion_matrix[true_class][predicted_class] += 1
-    if predicted_class != true_class:
-        wrong += 1
+    print("Using first 30 samples for training, 20 last samples for testing")
+    print(f"Wrong: {wrong}, Total: {len(testing_set)}")
+    print(f"Confusion matrix: \n{confusion_matrix}\n")
 
-print("Using first 30 samples for training")
-print(f"Wrong: {wrong}, Total: {len(testing_set)}")
-print(f"Confusion matrix: \n{confusion_matrix}")
+def training_30_last_samples():
+    N_TRAINING = 30
+    N_TESTING = 20
+
+    setosa_training = setosa[N_TESTING:]
+    setosa_testing = setosa[:N_TESTING]
+    versicolor_training = versicolor[N_TESTING:]
+    versicolor_testing = versicolor[:N_TESTING]
+    virginica_training = virginica[N_TESTING:]
+    virginica_testing = virginica[:N_TESTING]
+
+    training_set = []
+    for setosa_data in setosa_training: training_set.append([setosa_data, 0])
+    for versicolor_data in versicolor_training: training_set.append([versicolor_data, 1])
+    for virginica_data in virginica_training: training_set.append([virginica_data, 2])
+
+    weights = training(training_set, iterations, learning_rate)
+
+    # Creating a set for testing
+    testing_set = []
+    for setosa_data in setosa_testing: testing_set.append([setosa_data, 0])
+    for versicolor_data in versicolor_testing: testing_set.append([versicolor_data, 1])
+    for virginica_data in virginica_testing: testing_set.append([virginica_data, 2])
+
+    wrong = 0
+    confusion_matrix = np.zeros((N_CLASSES, N_CLASSES))
+
+    for test_sample in testing_set:
+        true_class = test_sample[1]
+        sample = [np.transpose(test_sample[0]), 1]
+        g = 1/(1+np.exp(-np.matmul(weights[0], sample[0]) - weights[1]*sample[1]))
+        predicted_class = np.argmax(g)
+        confusion_matrix[true_class][predicted_class] += 1
+        if predicted_class != true_class:
+            wrong += 1
+
+    print("Using last 30 samples for training, 20 first samples for testing")
+    print(f"Wrong: {wrong}, Total: {len(testing_set)}")
+    print(f"Confusion matrix: \n{confusion_matrix}\n")
+
+training_30_first_samples()
+training_30_last_samples()
