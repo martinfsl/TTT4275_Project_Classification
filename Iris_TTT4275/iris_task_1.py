@@ -10,27 +10,22 @@ N = 50
 # The data lines are stores in the order: sepal length, sepal width, petal length, petal width - All in cm
 with open("Iris_TTT4275/class_1") as f:
     setosa_data = f.read().splitlines()
-
 with open("Iris_TTT4275/class_2") as f:
     versicolor_data = f.read().splitlines()
-
 with open("Iris_TTT4275/class_3") as f:
     virginica_data = f.read().splitlines()
 
 setosa = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
-
 for flower in setosa_data:
     flower = flower.split(',')
     setosa.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
 
 versicolor = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
-
 for flower in versicolor_data:
     flower = flower.split(',')
     versicolor.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
 
 virginica = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
-
 for flower in virginica_data:
     flower = flower.split(',')
     virginica.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
@@ -65,43 +60,34 @@ normalization(virginica, all_samples)
 ### ------------------------------
 ### ------------------------------
 
-'''
-# Plotting the sepal length vs. sepal width for the three classes
-plt.figure(1)
-plt.plot([x[0] for x in setosa], [x[1] for x in setosa], 'ro', label='Setosa')
-plt.plot([x[0] for x in versicolor], [x[1] for x in versicolor], 'bo', label='Versicolor')
-plt.plot([x[0] for x in virginica], [x[1] for x in virginica], 'go', label='Virginica')
-plt.xlabel('Sepal length (cm)')
-plt.ylabel('Sepal width (cm)')
-plt.title('Sepal length vs. sepal width')
-plt.legend(['Setosa', 'Versicolor', 'Virginica'])
+def plotting(setosa_set, versicolor_set, virginica_set, title1, title2):
+    # Plotting the sepal length vs. sepal width for the three classes
+    plt.figure(1)
+    plt.plot([x[0] for x in setosa_set], [x[1] for x in setosa_set], 'ro', label='Setosa')
+    plt.plot([x[0] for x in versicolor_set], [x[1] for x in versicolor_set], 'bo', label='Versicolor')
+    plt.plot([x[0] for x in virginica_set], [x[1] for x in virginica_set], 'go', label='Virginica')
+    plt.xlabel('Sepal length (cm)')
+    plt.ylabel('Sepal width (cm)')
+    #plt.title('Sepal length vs. sepal width')
+    plt.title(title1)
+    plt.legend(['Setosa', 'Versicolor', 'Virginica'])
 
-# Plotting the petal length vs. petal width for the three classes
-plt.figure(2)
-plt.plot([x[2] for x in setosa], [x[3] for x in setosa], 'ro', label='Setosa')
-plt.plot([x[2] for x in versicolor], [x[3] for x in versicolor], 'bo', label='Versicolor')
-plt.plot([x[2] for x in virginica], [x[3] for x in virginica], 'go', label='Virginica')
-plt.xlabel('Petal length (cm)')
-plt.ylabel('Petal width (cm)')
-plt.title('Petal length vs. petal width')
-plt.legend(['Setosa', 'Versicolor', 'Virginica'])
+    # Plotting the petal length vs. petal width for the three classes
+    plt.figure(2)
+    plt.plot([x[2] for x in setosa_set], [x[3] for x in setosa_set], 'ro', label='Setosa')
+    plt.plot([x[2] for x in versicolor_set], [x[3] for x in versicolor_set], 'bo', label='Versicolor')
+    plt.plot([x[2] for x in virginica_set], [x[3] for x in virginica_set], 'go', label='Virginica')
+    plt.xlabel('Petal length (cm)')
+    plt.ylabel('Petal width (cm)')
+    #plt.title('Petal length vs. petal width')
+    plt.title(title2)
+    plt.legend(['Setosa', 'Versicolor', 'Virginica'])
 
-plt.show()
-'''
+    plt.show()
 
-### Task 1a
+plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
 
-N_TRAINING = 30
-
-setosa_training = setosa[:N_TRAINING]
-setosa_testing = setosa[N_TRAINING:]
-
-versicolor_training = versicolor[:N_TRAINING]
-versicolor_testing = versicolor[N_TRAINING:]
-
-virginica_training = virginica[:N_TRAINING]
-virginica_testing = virginica[N_TRAINING:]
-
+### ------------------------------
 ### Task 1b
 
 T = [[1, 0, 0], 
@@ -136,50 +122,52 @@ def training(set_for_training, M = 5000, alpha = 0.3):
         w_matrix_bias[0] = w_matrix_bias[0] - alpha*mse_matrix_gradient[0]
         w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
 
-        print(f"Iteration: {m+1}")
+        #print(f"Iteration: {m+1}")
     return w_matrix_bias
 
+### ------------------------------
+
 # Training the network for all training inputs for M iterations
-iterations = 5000
+iterations = 3000
 learning_rate = 0.3
 
-training_set = []
+### ------------------------------
+### Task 1a
 
-for setosa_data in setosa_training:
-    training_set.append([setosa_data, 0])
-for versicolor_data in versicolor_training:
-    training_set.append([versicolor_data, 1])
-for virginica_data in virginica_training:
-    training_set.append([virginica_data, 2])
+N_TRAINING = 30
+
+setosa_training = setosa[:N_TRAINING]
+setosa_testing = setosa[N_TRAINING:]
+versicolor_training = versicolor[:N_TRAINING]
+versicolor_testing = versicolor[N_TRAINING:]
+virginica_training = virginica[:N_TRAINING]
+virginica_testing = virginica[N_TRAINING:]
+
+### ------------------------------
+training_set = []
+for setosa_data in setosa_training: training_set.append([setosa_data, 0])
+for versicolor_data in versicolor_training: training_set.append([versicolor_data, 1])
+for virginica_data in virginica_training: training_set.append([virginica_data, 2])
 
 weights = training(training_set, iterations, learning_rate)
 
 # Creating a set for testing
 testing_set = []
 
-for setosa_data in setosa_testing:
-    testing_set.append([setosa_data, 0])
-for versicolor_data in versicolor_testing:
-    testing_set.append([versicolor_data, 1])
-for virginica_data in virginica_testing:
-    testing_set.append([virginica_data, 2])
+for setosa_data in setosa_testing: testing_set.append([setosa_data, 0])
+for versicolor_data in versicolor_testing: testing_set.append([versicolor_data, 1])
+for virginica_data in virginica_testing: testing_set.append([virginica_data, 2])
 
 np.random.shuffle(testing_set)
-
 wrong = 0
-
-# confusion_matrix[true_class][predicted_class]
 confusion_matrix = np.zeros((N_CLASSES, N_CLASSES))
 
 for test_sample in testing_set:
     true_class = test_sample[1]
-
     sample = [np.transpose(test_sample[0]), 1]
     g = 1/(1+np.exp(-np.matmul(weights[0], sample[0]) - weights[1]*sample[1]))
     predicted_class = np.argmax(g)
-
     confusion_matrix[true_class][predicted_class] += 1
-
     if predicted_class != true_class:
         wrong += 1
 
