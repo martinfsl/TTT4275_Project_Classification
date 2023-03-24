@@ -145,10 +145,9 @@ def testing(testing_set, weights):
             wrong += 1
     return confusion_matrix, wrong
 
+# Using the first 30 samples for training and the last 20 for testing
 def training_30_first_samples():
     N_TRAINING = 30
-
-    # Using the first 30 samples for training and the last 20 for testing
     # Creating a set for training
     training_set = []
     for setosa_data in setosa[:N_TRAINING]: training_set.append([setosa_data, 0])
@@ -168,10 +167,10 @@ def training_30_first_samples():
     print(f"Wrong: {wrong}, Total: {len(testing_set)}")
     print(f"Confusion matrix: \n{confusion_matrix}\n")
 
+
+# Using the last 30 samples for training and the first 20 for testing
 def training_30_last_samples():
     N_TESTING = 20
-
-    # Using the last 30 samples for training and the first 20 for testing
     # Creating a set for training
     training_set = []
     for setosa_data in setosa[N_TESTING:]: training_set.append([setosa_data, 0])
