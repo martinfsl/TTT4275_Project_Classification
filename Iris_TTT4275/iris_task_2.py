@@ -175,13 +175,16 @@ for i in range(N):
 
 def plot_histograms(features, title):
     plt.figure()
-    plt.hist(features[0], bins=25, label='Setosa')
-    plt.hist(features[1], bins=25, label='Versicolor')
-    plt.hist(features[2], bins=25, label='Virginica')
-    plt.xlabel('Length (cm)')
+    plt.hist(features[0], bins=15, label='Setosa')
+    plt.hist(features[1], bins=15, label='Versicolor')
+    plt.hist(features[2], bins=15, label='Virginica')
+    plt.xlabel('Size (cm)')
     plt.ylabel('Frequency')
     plt.title(title)
     plt.legend()
     plt.show()
 
 plot_histograms([setosa_features[0], versicolor_features[0], virginica_features[0]], 'Sepal length')
+plot_histograms([setosa_features[1], versicolor_features[1], virginica_features[1]], 'Sepal width')
+plot_histograms([setosa_features[2], versicolor_features[2], virginica_features[2]], 'Petal length')
+plot_histograms([setosa_features[3], versicolor_features[3], virginica_features[3]], 'Petal width')
