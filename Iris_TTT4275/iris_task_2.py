@@ -5,6 +5,7 @@ import copy
 # Defining constants
 
 N_CLASSES = 3
+N_FEATURES = 4
 N = 50
 
 # Load the data for the Iris Setosa class
@@ -150,51 +151,37 @@ def testing(testing_set, weights):
             wrong += 1
     return confusion_matrix, wrong
 
-# Using the first 30 samples for training and the last 20 for testing
-def training_30_first_samples():
-    N_TRAINING = 30
-    # Creating a set for training
-    training_set = []
-    for setosa_data in setosa[:N_TRAINING]: training_set.append([setosa_data, 0])
-    for versicolor_data in versicolor[:N_TRAINING]: training_set.append([versicolor_data, 1])
-    for virginica_data in virginica[:N_TRAINING]: training_set.append([virginica_data, 2])
-    # Creating a set for testing
-    testing_set = []
-    for setosa_data in setosa[N_TRAINING:]: testing_set.append([setosa_data, 0])
-    for versicolor_data in versicolor[N_TRAINING:]: testing_set.append([versicolor_data, 1])
-    for virginica_data in virginica[N_TRAINING:]: testing_set.append([virginica_data, 2])
+### ------------------------------
+### Task 2:
+### ------------------------------
+# First 30 samples for training, last 20 samples for testing
 
-    weights = training(training_set, iterations, learning_rate)
+# Getting all features into one array
+setosa_features = np.zeros((4, N)) # [[all sepal length], [all sepal width], [all petal length], [all petal width]]
+versicolor_features = np.zeros((4, N))
+virginica_features = np.zeros((4, N))
 
-    confusion_matrix, wrong = testing(testing_set, weights)
+for i in range(N):
+    setosa_features[0][i], setosa_features[1][i] = setosa_unormalized[i][0], setosa_unormalized[i][1]
+    setosa_features[2][i], setosa_features[3][i] = setosa_unormalized[i][2], setosa_unormalized[i][3]
 
-    print("Using first 30 samples for training, 20 last samples for testing")
-    print(f"Wrong: {wrong}, Total: {len(testing_set)}")
-    print(f"Confusion matrix: \n{confusion_matrix}\n")
+    versicolor_features[0][i], versicolor_features[1][i] = versicolor_unormalized[i][0], versicolor_unormalized[i][1]
+    versicolor_features[2][i], versicolor_features[3][i] = versicolor_unormalized[i][2], versicolor_unormalized[i][3]
 
+    virginica_features[0][i], virginica_features[1][i] = virginica_unormalized[i][0], virginica_unormalized[i][1]
+    virginica_features[2][i], virginica_features[3][i] = virginica_unormalized[i][2], virginica_unormalized[i][3]
 
-# Using the last 30 samples for training and the first 20 for testing
-def training_30_last_samples():
-    N_TESTING = 20
-    # Creating a set for training
-    training_set = []
-    for setosa_data in setosa[N_TESTING:]: training_set.append([setosa_data, 0])
-    for versicolor_data in versicolor[N_TESTING:]: training_set.append([versicolor_data, 1])
-    for virginica_data in virginica[N_TESTING:]: training_set.append([virginica_data, 2])
-    # Creating a set for testing
-    testing_set = []
-    for setosa_data in setosa[:N_TESTING]: testing_set.append([setosa_data, 0])
-    for versicolor_data in versicolor[:N_TESTING]: testing_set.append([versicolor_data, 1])
-    for virginica_data in virginica[:N_TESTING]: testing_set.append([virginica_data, 2])
+# Plot the histogram for the features of the three classes
 
-    weights = training(training_set, iterations, learning_rate)
+def plot_histograms(features, title):
+    plt.figure()
+    plt.hist(features[0], bins=25, label='Setosa')
+    plt.hist(features[1], bins=25, label='Versicolor')
+    plt.hist(features[2], bins=25, label='Virginica')
+    plt.xlabel('Length (cm)')
+    plt.ylabel('Frequency')
+    plt.title(title)
+    plt.legend()
+    plt.show()
 
-    confusion_matrix, wrong = testing(testing_set, weights)
-
-    print("Using last 30 samples for training, 20 first samples for testing")
-    print(f"Wrong: {wrong}, Total: {len(testing_set)}")
-    print(f"Confusion matrix: \n{confusion_matrix}\n")
-
-#training_30_first_samples()
-#training_30_last_samples()
-
+plot_histograms([setosa_features[0], versicolor_features[0], virginica_features[0]], 'Sepal length')
