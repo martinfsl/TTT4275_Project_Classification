@@ -90,8 +90,8 @@ def plotting(setosa_set, versicolor_set, virginica_set, title1, title2):
 
     plt.show()
 
-#plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
-plotting(setosa_unormalized, versicolor_unormalized, virginica_unormalized, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
+# plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
+# plotting(setosa_unormalized, versicolor_unormalized, virginica_unormalized, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
 
 ### ------------------------------
 ### Task 1b
@@ -184,10 +184,94 @@ def plot_histograms(features, title):
     plt.legend()
     plt.show()
 
-plot_histograms([setosa_features[0], versicolor_features[0], virginica_features[0]], 'Sepal length')
-plot_histograms([setosa_features[1], versicolor_features[1], virginica_features[1]], 'Sepal width')
-plot_histograms([setosa_features[2], versicolor_features[2], virginica_features[2]], 'Petal length')
-plot_histograms([setosa_features[3], versicolor_features[3], virginica_features[3]], 'Petal width')
+# plot_histograms([setosa_features[0], versicolor_features[0], virginica_features[0]], 'Sepal length')
+# plot_histograms([setosa_features[1], versicolor_features[1], virginica_features[1]], 'Sepal width')
+# plot_histograms([setosa_features[2], versicolor_features[2], virginica_features[2]], 'Petal length')
+# plot_histograms([setosa_features[3], versicolor_features[3], virginica_features[3]], 'Petal width')
 
-# Looks to be a good idea to use the petal length and petal width as features
-# Since we only remove one, sepal length is better than sepal width
+N_TRAINING = 30
+
+### ------------------------------
+
+def three_features():
+    # Looks to be a good idea to use the petal length and petal width as features
+    # Since we only remove one, sepal length is better than sepal width
+
+    setosa_3_features, versicolor_3_features, virginica_3_features = [], [], []
+
+    for i in range(N):
+        setosa_3_features.append([setosa[i][0], setosa[i][2], setosa[i][3]])
+        versicolor_3_features.append([versicolor[i][0], versicolor[i][2], versicolor[i][3]])
+        virginica_3_features.append([virginica[i][0], virginica[i][2], virginica[i][3]])
+
+    training_set_3_features, testing_set_3_features = [], []
+
+    # Creating the training set
+    for setosa_data in setosa_3_features[:N_TRAINING]: training_set_3_features.append([setosa_data, 0])
+    for versicolor_data in versicolor_3_features[:N_TRAINING]: training_set_3_features.append([versicolor_data, 1])
+    for virginica_data in virginica_3_features[:N_TRAINING]: training_set_3_features.append([virginica_data, 2])
+    # Creating the testing set
+    for setosa_data in setosa_3_features[N_TRAINING:]: testing_set_3_features.append([setosa_data, 0])
+    for versicolor_data in versicolor_3_features[N_TRAINING:]: testing_set_3_features.append([versicolor_data, 1])
+    for virginica_data in virginica_3_features[N_TRAINING:]: testing_set_3_features.append([virginica_data, 2])
+
+    weight_3_features = training(training_set_3_features, iterations, learning_rate)
+    confusion_matrix_3_features, wrong_3_features = testing(testing_set_3_features, weight_3_features)
+    print(f"Confusion matrix for 3 features:\n{confusion_matrix_3_features}")
+    print(f"Wrong predictions for 3 features: {wrong_3_features}")
+
+### ------------------------------
+
+def two_features():
+    # Now removing two features (sepal length and sepal width)
+    setosa_2_features, versicolor_2_features, virginica_2_features = [], [], []
+
+    for i in range(N):
+        setosa_2_features.append([setosa[i][2], setosa[i][3]])
+        versicolor_2_features.append([versicolor[i][2], versicolor[i][3]])
+        virginica_2_features.append([virginica[i][2], virginica[i][3]])
+
+    training_set_2_features, testing_set_2_features = [], []
+
+    # Creating the training set
+    for setosa_data in setosa_2_features[:N_TRAINING]: training_set_2_features.append([setosa_data, 0])
+    for versicolor_data in versicolor_2_features[:N_TRAINING]: training_set_2_features.append([versicolor_data, 1])
+    for virginica_data in virginica_2_features[:N_TRAINING]: training_set_2_features.append([virginica_data, 2])
+    # Creating the testing set
+    for setosa_data in setosa_2_features[N_TRAINING:]: testing_set_2_features.append([setosa_data, 0])
+    for versicolor_data in versicolor_2_features[N_TRAINING:]: testing_set_2_features.append([versicolor_data, 1])
+    for virginica_data in virginica_2_features[N_TRAINING:]: testing_set_2_features.append([virginica_data, 2])
+
+    weight_2_features = training(training_set_2_features, iterations, learning_rate)
+    confusion_matrix_2_features, wrong_2_features = testing(testing_set_2_features, weight_2_features)
+    print(f"Confusion matrix for 2 features:\n{confusion_matrix_2_features}")
+    print(f"Wrong predictions for 2 features: {wrong_2_features}")
+
+### ------------------------------
+
+def one_feature():
+    # Now only using one feature (petal length)
+    setosa_1_features, versicolor_1_features, virginica_1_features = [], [], []
+
+    for i in range(N):
+        setosa_1_features.append([setosa[i][2]])
+        versicolor_1_features.append([versicolor[i][2]])
+        virginica_1_features.append([virginica[i][2]])
+
+    training_set_1_features, testing_set_1_features = [], []
+
+    # Creating the training set
+    for setosa_data in setosa_1_features[:N_TRAINING]: training_set_1_features.append([setosa_data, 0])
+    for versicolor_data in versicolor_1_features[:N_TRAINING]: training_set_1_features.append([versicolor_data, 1])
+    for virginica_data in virginica_1_features[:N_TRAINING]: training_set_1_features.append([virginica_data, 2])
+    # Creating the testing set
+    for setosa_data in setosa_1_features[N_TRAINING:]: testing_set_1_features.append([setosa_data, 0])
+    for versicolor_data in versicolor_1_features[N_TRAINING:]: testing_set_1_features.append([versicolor_data, 1])
+    for virginica_data in virginica_1_features[N_TRAINING:]: testing_set_1_features.append([virginica_data, 2])
+
+    weight_1_features = training(training_set_1_features, iterations, learning_rate)
+    confusion_matrix_1_features, wrong_1_features = testing(testing_set_1_features, weight_1_features)
+    print(f"Confusion matrix for 1 feature:\n{confusion_matrix_1_features}")
+    print(f"Wrong predictions for 1 feature: {wrong_1_features}")
+
+### ------------------------------
