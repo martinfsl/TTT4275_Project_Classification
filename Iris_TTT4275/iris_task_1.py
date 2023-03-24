@@ -1,5 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import copy
 
 # Defining constants
 
@@ -43,8 +44,11 @@ max_sepal_length = max([x[0] for x in all_samples])
 min_sepal_length = min([x[0] for x in all_samples])
 '''
 
+# Want to keep the original data for plotting later
+setosa_unormalized, versicolor_unormalized, virginica_unormalized = copy.deepcopy(setosa), copy.deepcopy(versicolor), copy.deepcopy(virginica)
+
 def normalization(flower_set, samples):
-    for flower in flower_set:
+    for flower in flower_set:  
         flower[0] = (flower[0] - min([x[0] for x in all_samples]))/(max([x[0] for x in all_samples]) - min([x[0] for x in all_samples]))
         flower[1] = (flower[1] - min([x[1] for x in all_samples]))/(max([x[1] for x in all_samples]) - min([x[1] for x in all_samples]))
         flower[2] = (flower[2] - min([x[2] for x in all_samples]))/(max([x[2] for x in all_samples]) - min([x[2] for x in all_samples]))
@@ -86,6 +90,8 @@ def plotting(setosa_set, versicolor_set, virginica_set, title1, title2):
     plt.show()
 
 #plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
+#plotting(setosa_unormalized, versicolor_unormalized, virginica_unormalized, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
+#plotting(setosa_normalized, versicolor_normalized, virginica_normalized, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
 
 ### ------------------------------
 ### Task 1b
@@ -96,14 +102,14 @@ T = [[1, 0, 0],
 
 def training(set_for_training, M = 5000, alpha = 0.3):
     # Creating a weighting matrix and a bias vector
-    w_matrix = np.random.random((N_CLASSES, np.shape(setosa)[1])) # Weights for the three classes and all features
+    w_matrix = np.random.random((N_CLASSES, len(set_for_training[0][0]))) # Weights for the three classes and all features
     w0 = np.random.random(N_CLASSES) # Bias
     # The discriminant vector will be [W w0][x^T 1]^T
     w_matrix_bias = [w_matrix, w0]
 
     for m in range(M):
-        np.random.shuffle(set_for_training)# Randomize the training set for each iteration
-        mse_matrix_gradient = [np.zeros((N_CLASSES, np.shape(setosa)[1])), np.zeros(N_CLASSES)] # MSE for the three classes and all features
+        np.random.shuffle(set_for_training) # Randomize the training set for each iteration
+        mse_matrix_gradient = [np.zeros((N_CLASSES, len(set_for_training[0][0]))), np.zeros(N_CLASSES)] # MSE for the three classes and all features
         
         # Training the network for all training inputs, shuffled
         for data in set_for_training:
