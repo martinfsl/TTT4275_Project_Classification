@@ -91,7 +91,7 @@ def plotting(setosa_set, versicolor_set, virginica_set, title1, title2):
     plt.show()
 
 #plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
-#plotting(setosa_unormalized, versicolor_unormalized, virginica_unormalized, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
+plotting(setosa_unormalized, versicolor_unormalized, virginica_unormalized, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
 
 ### ------------------------------
 ### Task 1b
@@ -175,9 +175,9 @@ for i in range(N):
 
 def plot_histograms(features, title):
     plt.figure()
-    plt.hist(features[0], bins=15, label='Setosa')
-    plt.hist(features[1], bins=15, label='Versicolor')
-    plt.hist(features[2], bins=15, label='Virginica')
+    plt.hist(features[0], bins=18, label='Setosa')
+    plt.hist(features[1], bins=18, label='Versicolor')
+    plt.hist(features[2], bins=18, label='Virginica')
     plt.xlabel('Size (cm)')
     plt.ylabel('Frequency')
     plt.title(title)
@@ -188,3 +188,6 @@ plot_histograms([setosa_features[0], versicolor_features[0], virginica_features[
 plot_histograms([setosa_features[1], versicolor_features[1], virginica_features[1]], 'Sepal width')
 plot_histograms([setosa_features[2], versicolor_features[2], virginica_features[2]], 'Petal length')
 plot_histograms([setosa_features[3], versicolor_features[3], virginica_features[3]], 'Petal width')
+
+# Looks to be a good idea to use the petal length and petal width as features
+# Since we only remove one, sepal length is better than sepal width
