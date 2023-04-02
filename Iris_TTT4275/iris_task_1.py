@@ -195,6 +195,6 @@ def training_30_last_samples():
     print(f"Wrong: {wrong}, Total: {len(testing_set)}")
     print(f"Confusion matrix: \n{confusion_matrix}\n")
 
-#training_30_first_samples()
-#training_30_last_samples()
+training_30_first_samples()
+training_30_last_samples()
 
