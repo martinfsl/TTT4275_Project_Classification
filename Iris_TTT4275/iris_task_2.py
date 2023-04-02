@@ -275,3 +275,7 @@ def one_feature():
     print(f"Wrong predictions for 1 feature: {wrong_1_features}")
 
 ### ------------------------------
+
+three_features()
+two_features()
+one_feature()
