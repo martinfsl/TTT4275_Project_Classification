@@ -1,29 +1,30 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import scipy.io as sio
 
-NX = NY = 28
-N = NX*NY
+all_data = sio.loadmat('MNist_ttt4275/data_all.mat')
 
-labels = []
-samples = []
+#print(all_data.keys())
+#print(all_data.values())
 
-# Load the test data from the file MNist_ttt4275/test_images.bin which is a binary file
-# with 10000 images of size 28x28
-with open('MNist_ttt4275/train_images.bin', 'rb') as f:
-    for i in range(60000):
-        samples.append(np.fromfile(f, dtype=np.uint8, count=N))
+col_size = all_data.get('col_size')[0][0] # Need to add indexes because of the way the data is stored and that we want a scalar
+row_size = all_data.get('row_size')[0][0]
+num_test = all_data.get('num_test')[0][0]
+num_train = all_data.get('num_train')[0][0]
 
-# Read the labels from the file MNist_ttt4275/test_labels.bin which is a binary file
-with open('MNist_ttt4275/train_labels.bin', 'rb') as f:
-    for i in range(60000):
-        label = np.fromfile(f, dtype=np.uint8, count=1)
-        labels.append(label[0])
+test_labels = all_data.get('testlab')
+test_images = all_data.get('testv')
 
-print(labels[:100])
-print(len(labels))
+train_labels = all_data.get('trainlab')
+train_images = all_data.get('trainv')
 
-gv = samples[70].reshape(NX, NY)
+#gv = np.reshape(train_images[0], (28, 28))
 
-plt.gray()
-plt.imshow(gv)
-plt.show()
+def plotting(array, rows, cols, title):
+    plot_data = np.reshape(array, (rows, cols))
+    plt.gray()
+    plt.imshow(plot_data)
+    plt.title(title)
+    plt.show()
+
+#plotting(train_images[6], row_size, col_size, str(train_labels[6][0]))
