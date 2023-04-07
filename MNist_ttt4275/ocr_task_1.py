@@ -9,7 +9,7 @@ all_data = sio.loadmat('MNist_ttt4275/data_all.mat')
 # Need to add indexes because of the way the data is stored and that we want a scalar
 COL_SIZE, ROW_SIZE = all_data.get('col_size')[0][0], all_data.get('row_size')[0][0]
 NUM_TEST, NUM_TRAIN = all_data.get('num_test')[0][0], all_data.get('num_train')[0][0]
-N = all_data.get('vec_size')[0][0]
+N = all_data.get('vec_size')[0][0] # Number of pixels in each image - 784
 NUMBERS = 10 # 0-9
 
 # Get the data from the dictionary (all_data)
@@ -37,32 +37,30 @@ for i in range(NUM_TEST):
 wrong = []
 i = 0
 
-for test_sample in testing[760:785]:
-    values = test_sample[0]
-    label = test_sample[1]
+# Function for calculating the Euclidean distance between two vectors
+def calc_distance(array_a, array_b):
+    distance = np.matmul(np.transpose(np.array(array_a) - np.array(array_b)), (np.array(array_a) - np.array(array_b)))
+    return distance
 
-    # # Finding the distance between the test sample and all the training samples
-    # distances = []
-    # for train_sample in training:
-    #     distances.append([np.matmul(np.transpose(values - train_sample[0]), values - train_sample[0]), train_sample[1]])
-    
-    # min_index = np.argmin([x[0] for x in distances])
-    # predicted_label = distances[min_index][1]
+def classify(sample, templates):
+    distances = []
+    for template in templates:
+        distances.append(calc_distance(sample[0], template[0]))
+        #print(distances[-1], template[1])
+    min_index = np.argmin(distances)
+    #print("Min index: ", min_index)
+    predicted_label = templates[min_index][1]
+    return predicted_label
 
-    # Better code:
+def test(samples, templates):
+    wrong = 0
+    i = 0
+    for sample in samples:
+        predicted_label = classify(sample, templates)
+        if predicted_label != sample[1]:
+            wrong += 1
+        print(f"Sample {i} - Predicted: {predicted_label}, Actual: {sample[1]}, Wrong: {wrong}")
+        i += 1
+    #return wrong
 
-    min_distance = np.matmul(np.transpose(values - training[0][0]), values - training[0][0])
-    predicted_label = training[0][1]
-
-    for train_sample in training[1:]:
-        if np.matmul(np.transpose(values - train_sample[0]), values - train_sample[0]) < min_distance:
-            min_distance = np.matmul(np.transpose(values - train_sample[0]), values - train_sample[0])
-            predicted_label = train_sample[1]
-
-    if predicted_label != label:
-        wrong.append([values, label, predicted_label])
-    
-    i += 1
-    print(i)
-
-print("Number of wrong predictions: ", len(wrong))
+test(testing[0:500], training)

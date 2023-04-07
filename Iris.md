@@ -10,5 +10,6 @@ Output vector:
 This is used both to train the weights in W and w0, and later to classify the input.
 
 To-Do: # What remains
-    * 
+    * Calculate error-rate and confusion matrix
+    * Add a tolerance to the gradient descent
 
