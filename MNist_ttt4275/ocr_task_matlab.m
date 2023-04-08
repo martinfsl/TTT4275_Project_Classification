@@ -1,16 +1,26 @@
-% distance = dist(trainv, transpose(testv(1, :))); % One test-vector
+load('data_all.mat')
+load('../../Project_Files/distances.mat')
 
-% Calculate the distances for all vectors, saved in matrix called distances
-% distances = calculate_distance(testv, trainv);
+disp("-----------------------");
+disp("Beginning task 1");
 
+% disp("Calculate the distances (task 1)");
+% distances = calculate_distance(testv, trainv); % Matrix containing all distances
+% disp("Finished calculating the distances (task 1)");
+
+disp("Classifying (1NN)");
 [conf_mat, w_data, w_labels, num_w, c_data, c_labels, num_c] = classify_1NN(distances, vec_size, num_test, testv, testlab, trainlab);
+disp("Finished classifying using the 1NN");
+
 
 % Plot one wrongly classified and one correctly classified
 plotting(w_data, w_labels, num_w, c_data, c_labels, num_c, col_size, row_size);
 
+disp("Ending task 1");
+disp("-----------------------");
+
 % Classifying the test-vectors given the distance matrix.
-% Returns confusion-matrix, data, labels and amount for wrong and correct
-% classification. 
+% Returns confusion-matrix, data, labels and amount for wrong and correct classification. 
 function [cm, wd, wl, w, cd, cl, c] = classify_1NN(distances, vec_size, num_test, testv, testlab, trainlab)
     N = 10; % Number of classes, range is 0-9
 

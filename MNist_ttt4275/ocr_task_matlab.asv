@@ -1,17 +1,22 @@
-% distance = dist(trainv, transpose(testv(1, :))); % One test-vector
+load('data_all.mat')
+load('../../Project_Files/distances.mat')
+
 
 % Calculate the distances for all vectors, saved in matrix called distances
 % distances = calculate_distance(testv, trainv);
 
-[conf_mat, w_data, w_labels, num_w, c_data, c_labels, num_c
+disp("--- Beginning task 1 ---");
+[conf_mat, w_data, w_labels, num_w, c_data, c_labels, num_c] = classify_1NN(distances, vec_size, num_test, testv, testlab, trainlab);
 
 % Plot one wrongly classified and one correctly classified
-plotting(wrongly_classified, wrongly_labels, wrong, correctly_classified, correctly_labels, correct, col_size, row_size);
+plotting(w_data, w_labels, num_w, c_data, c_labels, num_c, col_size, row_size);
+disp("Ending task 1");
+disp("-----------------------")
 
 % Classifying the test-vectors given the distance matrix.
 % Returns confusion-matrix, data, labels and amount for wrong and correct
 % classification. 
-function [cm, wd, wl, w, cd, cl, c] = classify_1NN(distances, vec_size, num_test, testv, testlab)
+function [cm, wd, wl, w, cd, cl, c] = classify_1NN(distances, vec_size, num_test, testv, testlab, trainlab)
     N = 10; % Number of classes, range is 0-9
 
     w = 0; % Amount of wrong classification
@@ -23,31 +28,33 @@ function [cm, wd, wl, w, cd, cl, c] = classify_1NN(distances, vec_size, num_test
     wl = zeros(1, 2); % Vector containing labels for wrong classification
     cd = zeros(1, vec_size); % Vector containing data for correct classification
     cl = zeros(1, 2); % Vector containing labels for correct classification
-    
     % For the label-matrix: First is the true label, the second is the
     % predicted label for each value
 
     for i = 1:num_test
-        [~, index] = min(distances(:, i));
+        [~, index] = min(distances(:, i)); % Finds index in training set with min. dist.
         pl = trainlab(index); % Predicted/Classified label
         tl = testlab(i); % True label
 
         cm(tl+1, pl+1) = cm(tl+1, pl+1) + 1; % Updating confusion matrix
 
+        % Checks is the predicted label was correct or wrong
+        % Respectively adds data and [true label, predicted label] to
+        % matrices
         if pl ~= tl
-            w = w + 1;
-            wd(wrong, :) = testv(i, :);
-            wl(wrong, :) = [tl, pl];
+            w = w + 1; % Updates number of wrong classification
+            wd(w, :) = testv(i, :); % Adds data
+            wl(w, :) = [tl, pl]; % Adds true / predicted labels
         elseif pl == tl
-            c = c + 1;
-            cd(correct, :) = testv(i, :);
-            cl(correct, :) = [tl, pl];
+            c = c + 1; % Updates number of correct classification
+            cd(c, :) = testv(i, :); % Adds data
+            cl(c, :) = [tl, pl]; % Adds true / predicted labels
         end
     end
 end
-    
+
+% Plotting randomly picked wrongly classified and correctly classified
 function plotting(wrong_data, wrong_labels, num_wrong, correct_data, correct_labels, num_correct, col_size, row_size)
-    % Plotting randomly picked wrongly classified and correctly classified
     randint_wrong = randi(num_wrong); % Index [1, # wrongly classified]
     image_wrong = wrong_data(randint_wrong, :);
 
