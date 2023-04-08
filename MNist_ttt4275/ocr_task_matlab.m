@@ -1,23 +1,57 @@
-load('data_all.mat')
-load('../../Project_Files/distances.mat')
+% load('data_all.mat')
+% load('../../Project_Files/distances.mat')
+
+
+%%%------------------------------------
+%%%------------------------------------
+%%%             TASK 1
+%%%------------------------------------
+%%%------------------------------------
+
+% disp("-----------------------");
+% disp("Beginning task 1");
+% 
+% % disp("Calculate the distances (task 1)");
+% % distances = calculate_distance(testv, trainv); % Matrix containing all distances
+% % disp("Finished calculating the distances (task 1)");
+% 
+% disp("Classifying (1NN)");
+% [conf_mat, w_data, w_labels, num_w, c_data, c_labels, num_c] = classify_1NN(distances, vec_size, num_test, testv, testlab, trainlab);
+% disp("Finished classifying using the 1NN");
+% 
+% 
+% % Plot one wrongly classified and one correctly classified
+% plotting(w_data, w_labels, num_w, c_data, c_labels, num_c, col_size, row_size);
+% 
+% disp("Ending task 1");
+% disp("-----------------------");
+
+%%%------------------------------------
+%%%------------------------------------
+%%%         END OF TASK 1
+%%%------------------------------------
+%%%------------------------------------
+
+%%%------------------------------------
+%%%------------------------------------
+%%%             TASK 2
+%%%------------------------------------
+%%%------------------------------------
 
 disp("-----------------------");
-disp("Beginning task 1");
+disp("Beginning task 2");
 
-% disp("Calculate the distances (task 1)");
-% distances = calculate_distance(testv, trainv); % Matrix containing all distances
-% disp("Finished calculating the distances (task 1)");
+M = 64;
+[idx, C] = kmeans(trainv, M);
 
-disp("Classifying (1NN)");
-[conf_mat, w_data, w_labels, num_w, c_data, c_labels, num_c] = classify_1NN(distances, vec_size, num_test, testv, testlab, trainlab);
-disp("Finished classifying using the 1NN");
-
-
-% Plot one wrongly classified and one correctly classified
-plotting(w_data, w_labels, num_w, c_data, c_labels, num_c, col_size, row_size);
-
-disp("Ending task 1");
+disp("Ending task 2");
 disp("-----------------------");
+
+%%%------------------------------------
+%%%------------------------------------
+%%%         END OF TASK 2
+%%%------------------------------------
+%%%------------------------------------
 
 % Classifying the test-vectors given the distance matrix.
 % Returns confusion-matrix, data, labels and amount for wrong and correct classification. 
