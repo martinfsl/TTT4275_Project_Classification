@@ -1,5 +1,5 @@
 % load('data_all.mat')
-% load('../../Project_Files/distances.mat')
+load('../../Project_Files/distances.mat')
 
 
 %%%------------------------------------
@@ -8,23 +8,44 @@
 %%%------------------------------------
 %%%------------------------------------
 
-% disp("-----------------------");
-% disp("Beginning task 1");
-% 
-% % disp("Calculate the distances (task 1)");
-% % distances = calculate_distance(testv, trainv); % Matrix containing all distances
-% % disp("Finished calculating the distances (task 1)");
-% 
-% disp("Classifying (1NN)");
-% [conf_mat, w_data, w_labels, num_w, c_data, c_labels, num_c] = classify_1NN(distances, vec_size, num_test, testv, testlab, trainlab);
-% disp("Finished classifying using the 1NN");
-% 
-% 
-% % Plot one wrongly classified and one correctly classified
+disp("-----------------------");
+disp("Beginning task 1");
+
+% Task 1 variables
+w_1 = 0; % Amount of wrong classification
+c_1 = 0; % Amount of correct classification
+
+cm_1 = zeros(10, 10); % Confusion-matrix (0-9 digits -> 10 classes)
+
+wd_1 = zeros(1, vec_size); % Vector containing data for wrong classification
+wl_1 = zeros(1, 2); % Vector containing labels for wrong classification
+cd_1 = zeros(1, vec_size); % Vector containing data for correct classification
+cl_1 = zeros(1, 2); % Vector containing labels for correct classification
+% For the label-matrix: First is the true label, the second is the
+% predicted label for each value
+
+size_bulk = 999; % 1000 - 1 (needs to be removed)
+for i = 1:(num_test/size_bulk)
+    % Splitting the testing-sets into 'bulks' of 1000 elements, calculating
+    % distances for each of these sets. Adding all togheter to a new matrix
+    distances_sets = zeros(num_train, size_bulk+1); 
+    testing_data = testv(i:i+size_bulk, :);
+    testing_labels = testlab(i:i+size_bulk, :);
+    [number_of_tests, ~] = size(testing_data);
+    
+    % distances_sets = calculate_distance(testing_data, trainv);
+
+    % Classifying entire test-set at once
+%     [cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1] = classify_1NN(distances(:, i:i+size_bulk), number_of_tests, testing_data, testing_labels, trainlab, cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1);
+%     [cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1] = classify_1NN(distances_sets, number_of_tests, testing_data, testing_labels, trainlab, cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1);
+    [cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1] = classify_kNN(distances(:, i:i+size_bulk), number_of_tests, testing_data, testing_labels, trainlab, cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1, 7);
+end
+
+% Plot one wrongly classified and one correctly classified
 % plotting(w_data, w_labels, num_w, c_data, c_labels, num_c, col_size, row_size);
-% 
-% disp("Ending task 1");
-% disp("-----------------------");
+
+disp("Ending task 1");
+disp("-----------------------");
 
 %%%------------------------------------
 %%%------------------------------------
@@ -41,9 +62,62 @@
 disp("-----------------------");
 disp("Beginning task 2");
 
-M = 64;
-[idx, C] = kmeans(trainv, M);
+disp("Sorting");
+% Creating vectors to hold all training data of one class
+[trainv0, trainv1, trainv2, trainv3, trainv4, trainv5, trainv6, trainv7, trainv8, trainv9] = sorting(trainv, trainlab, num_train, vec_size);
 
+M = 64;
+[~, C0] = kmeans(trainv0, M);
+[~, C1] = kmeans(trainv1, M);
+[~, C2] = kmeans(trainv2, M);
+[~, C3] = kmeans(trainv3, M);
+[~, C4] = kmeans(trainv4, M);
+[~, C5] = kmeans(trainv5, M);
+[~, C6] = kmeans(trainv6, M);
+[~, C7] = kmeans(trainv7, M);
+[~, C8] = kmeans(trainv8, M);
+[~, C9] = kmeans(trainv9, M);
+
+new_training_set = zeros(10*M, vec_size);
+new_training_set(1:1*M, :) = C0;
+new_training_set(1*M+1:2*M, :) = C1;
+new_training_set(2*M+1:3*M, :) = C2;
+new_training_set(3*M+1:4*M, :) = C3;
+new_training_set(4*M+1:5*M, :) = C4;
+new_training_set(5*M+1:6*M, :) = C5;
+new_training_set(6*M+1:7*M, :) = C6;
+new_training_set(7*M+1:8*M, :) = C7;
+new_training_set(8*M+1:9*M, :) = C8;
+new_training_set(9*M+1:10*M, :) = C9;
+
+% Task 2 variables
+w_2 = 0; % Amount of wrong classification
+c_2 = 0; % Amount of correct classification
+cm_2 = zeros(10, 10); % Confusion-matrix (0-9 digits -> 10 classes)
+wd_2 = zeros(1, vec_size); % Vector containing data for wrong classification
+wl_2 = zeros(1, 2); % Vector containing labels for wrong classification
+cd_2 = zeros(1, vec_size); % Vector containing data for correct classification
+cl_2 = zeros(1, 2); % Vector containing labels for correct classification
+% For the label-matrix: First is the true label, the second is the
+% predicted label for each value
+size_bulk = 999; % 1000 - 1 (needs to be removed)
+for i = 1:(num_test/(size_bulk+1))
+    % Splitting the testing-sets into 'bulks' of 1000 elements, calculating
+    % distances for each of these sets. Adding all togheter to a new matrix
+    testing_data = testv(i:i+size_bulk, :);
+    testing_labels = testlab(i:i+size_bulk, :);
+    [number_of_tests, ~] = size(testing_data);
+    
+    training_labels = [0*ones(M, 1); 1*ones(M,1); 2*ones(M,1); 3*ones(M,1); 4*ones(M,1); 5*ones(M,1); 6*ones(M,1); 7*ones(M,1); 8*ones(M,1); 9*ones(M,1)];
+    
+    disp("Calculating distances");
+    distances_clustering = calculate_distance(testing_data, new_training_set);
+    disp("Classifying");
+%     [cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2] = classify_1NN(distances_clustering, number_of_tests, testing_data, testing_labels, training_labels, cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2);
+    [cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2] = classify_kNN(distances_clustering, number_of_tests, testing_data, testing_labels, training_labels, cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2, 7);
+%     [cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2] = classify_1NN(distances_clustering, number_of_tests, testing_data, testing_labels, training_labels, cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2);
+end
+    
 disp("Ending task 2");
 disp("-----------------------");
 
@@ -53,27 +127,43 @@ disp("-----------------------");
 %%%------------------------------------
 %%%------------------------------------
 
-% Classifying the test-vectors given the distance matrix.
+% Classifying the test-vectors given the distance matrix using 1NN.
 % Returns confusion-matrix, data, labels and amount for wrong and correct classification. 
-function [cm, wd, wl, w, cd, cl, c] = classify_1NN(distances, vec_size, num_test, testv, testlab, trainlab)
-    N = 10; % Number of classes, range is 0-9
+function [cm, wd, wl, w, cd, cl, c] = classify_kNN(distances_set, num_test, test_data, test_labels, training_labels, cm, wd, wl, w, cd, cl, c, k)
+    for l = 1:num_test
+        [~, indices] = sort(distances_set(:, l));
+        
+        min_labels = zeros(k, 1);
+        for y = 1:k
+            min_labels(y) = training_labels(indices(y));
+        end
 
-    w = 0; % Amount of wrong classification
-    c = 0; % Amount of correct classification
+        pl = mode(min_labels); % Finding the predicted label
+        tl = test_labels(l);
+        
+        cm(tl+1, pl+1) = cm(tl+1, pl+1) + 1; % Updating confusion matrix
 
-    cm = zeros(N, N); % Confusion-matrix
+        % Checks is the predicted label was correct or wrong
+        % Respectively adds data and [true label, predicted label] to matrices
+        if pl ~= tl
+            w = w + 1; % Updates number of wrong classification
+            wd(w, :) = test_data(l, :); % Adds data
+            wl(w, :) = [tl, pl]; % Adds true / predicted labels
+        elseif pl == tl
+            c = c + 1; % Updates number of correct classification
+            cd(c, :) = test_data(l, :); % Adds data
+            cl(c, :) = [tl, pl]; % Adds true / predicted labels
+        end
+    end
+end
 
-    wd = zeros(1, vec_size); % Vector containing data for wrong classification
-    wl = zeros(1, 2); % Vector containing labels for wrong classification
-    cd = zeros(1, vec_size); % Vector containing data for correct classification
-    cl = zeros(1, 2); % Vector containing labels for correct classification
-    % For the label-matrix: First is the true label, the second is the
-    % predicted label for each value
-
+% Classifying the test-vectors given the distance matrix using 1NN.
+% Returns confusion-matrix, data, labels and amount for wrong and correct classification. 
+function [cm, wd, wl, w, cd, cl, c] = classify_1NN(distances_set, num_test, test_data, test_labels, training_labels, cm, wd, wl, w, cd, cl, c)
     for i = 1:num_test
-        [~, index] = min(distances(:, i)); % Finds index in training set with min. dist.
-        pl = trainlab(index); % Predicted/Classified label
-        tl = testlab(i); % True label
+        [~, index] = min(distances_set(:, i)); % Finds index in training set with min. dist.
+        pl = training_labels(index); % Predicted/Classified label
+        tl = test_labels(i); % True label
 
         cm(tl+1, pl+1) = cm(tl+1, pl+1) + 1; % Updating confusion matrix
 
@@ -82,42 +172,66 @@ function [cm, wd, wl, w, cd, cl, c] = classify_1NN(distances, vec_size, num_test
         % matrices
         if pl ~= tl
             w = w + 1; % Updates number of wrong classification
-            wd(w, :) = testv(i, :); % Adds data
+            wd(w, :) = test_data(i, :); % Adds data
             wl(w, :) = [tl, pl]; % Adds true / predicted labels
         elseif pl == tl
             c = c + 1; % Updates number of correct classification
-            cd(c, :) = testv(i, :); % Adds data
+            cd(c, :) = test_data(i, :); % Adds data
             cl(c, :) = [tl, pl]; % Adds true / predicted labels
         end
     end
 end
 
 % Plotting randomly picked wrongly classified and correctly classified
-function plotting(wrong_data, wrong_labels, num_wrong, correct_data, correct_labels, num_correct, col_size, row_size)
-    randint_wrong = randi(num_wrong); % Index [1, # wrongly classified]
-    image_wrong = wrong_data(randint_wrong, :);
-
-    randint_correct = randi(num_correct); % Index [1, # correctly classified]
-    image_correct = correct_data(randint_correct, :);
-
-    image(transpose(reshape(image_wrong, col_size, row_size)));
-    disp("For the wrongly classified: ");
-    fprintf('True label: ');
-    fprintf('%d', wrong_labels(randint_wrong, 1));
-    fprintf(' Predicted label: ');
-    fprintf('%d', wrong_labels(randint_wrong, 2));
-    fprintf('\n');
-    pause(5);
-    image(transpose(reshape(image_correct, col_size, row_size)));
-    disp("For the correctly classified: ");
-    fprintf('True label: ');
-    fprintf('%d', correct_labels(randint_correct, 1));
-    fprintf(' Predicted label: ');
-    fprintf('%d', correct_labels(randint_correct, 2));
-    fprintf('\n');
+function plotting(image_data, col_size, row_size)
+    image(transpose(reshape(image_data, col_size, row_size)));
+    
+%     disp("For the wrongly classified: ");
+%     fprintf('True label: ');
+%     fprintf('%d', wrong_labels(randint_wrong, 1));
+%     fprintf(' Predicted label: ');
+%     fprintf('%d', wrong_labels(randint_wrong, 2));
+%     fprintf('\n');
 end
 
 % Calculates the distances given test-vector and templates
-function distances = calculate_distance(test_set, templates)
-    distances = dist(templates, transpose(test_set));
+function distances_return = calculate_distance(test_set, templates)
+    distances_return = dist(templates, transpose(test_set));
+end
+
+function [s0, s1, s2, s3, s4, s5, s6, s7, s8, s9] = sorting(training_data, training_label, num_train, vec_size)
+    s0 = zeros(0, vec_size);
+    s1 = zeros(0, vec_size);
+    s2 = zeros(0, vec_size);
+    s3 = zeros(0, vec_size);
+    s4 = zeros(0, vec_size);
+    s5 = zeros(0, vec_size);
+    s6 = zeros(0, vec_size);
+    s7 = zeros(0, vec_size);
+    s8 = zeros(0, vec_size);
+    s9 = zeros(0, vec_size);
+    
+    for j = 1:num_train
+        if training_label(j) == 0
+           s0(end+1, :) = training_data(j, :);
+        elseif training_label(j) == 1
+           s1(end+1, :) = training_data(j, :);
+        elseif training_label(j) == 2
+           s2(end+1, :) = training_data(j, :);
+        elseif training_label(j) == 3
+           s3(end+1, :) = training_data(j, :);
+        elseif training_label(j) == 4
+           s4(end+1, :) = training_data(j, :);
+        elseif training_label(j) == 5
+           s5(end+1, :) = training_data(j, :);
+        elseif training_label(j) == 6
+           s6(end+1, :) = training_data(j, :);
+        elseif training_label(j) == 7
+           s7(end+1, :) = training_data(j, :);
+        elseif training_label(j) == 8
+           s8(end+1, :) = training_data(j, :);
+        elseif training_label(j) == 9
+           s9(end+1, :) = training_data(j, :);
+        end
+    end
 end
