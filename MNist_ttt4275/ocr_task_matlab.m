@@ -1,5 +1,7 @@
-load('data_all.mat')
-load('../../Project_Files/distances.mat')
+% disp("Loading data:");
+%load('data_all.mat')
+% disp("Loading pre-saved distances:");
+%load('../../Project_Files/distances.mat')
 
 
 %%%------------------------------------
@@ -34,10 +36,10 @@ for i = 1:(num_test/size_bulk)
     testing_labels = testlab(i:i+size_bulk, :);
     [number_of_tests, ~] = size(testing_data);
     
-    % distances_sets = calculate_distance(testing_data, trainv);
-
-    % Classifying entire test-set at once
-%     [cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1] = classify_1NN(distances(:, i:i+size_bulk), number_of_tests, testing_data, testing_labels, trainlab, cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1);
+%     disp("Calculating distances");
+%     distances_sets = calculate_distance(testing_data, trainv);
+    disp("Classifying");
+    % 1-NN classifier:
     [cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1] = classify_1NN(distances_set, number_of_tests, testing_data, testing_labels, trainlab, cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1);
     % 7-NN classifier:
     [cm_1_7, wd_1_7, wl_1_7, w_1_7, cd_1_7, cl_1_7, c_1_7] = classify_kNN(distances_set, number_of_tests, testing_data, testing_labels, trainlab, cm_1_7, wd_1_7, wl_1_7, w_1_7, cd_1_7, cl_1_7, c_1_7, 7);
@@ -67,7 +69,8 @@ disp("-----------------------");
 disp("-----------------------");
 disp("Beginning task 2");
 
-disp("Sorting");
+disp("Sorting & Clustering");
+
 % Creating vectors to hold all training data of one class
 [trainv0, trainv1, trainv2, trainv3, trainv4, trainv5, trainv6, trainv7, trainv8, trainv9] = sorting(trainv, trainlab, num_train, vec_size);
 
@@ -96,15 +99,18 @@ new_training_set(8*M+1:9*M, :) = C8;
 new_training_set(9*M+1:10*M, :) = C9;
 
 % Task 2 variables
-w_2 = 0; % Amount of wrong classification
-c_2 = 0; % Amount of correct classification
-cm_2 = zeros(10, 10); % Confusion-matrix (0-9 digits -> 10 classes)
-wd_2 = zeros(1, vec_size); % Vector containing data for wrong classification
-wl_2 = zeros(1, 2); % Vector containing labels for wrong classification
-cd_2 = zeros(1, vec_size); % Vector containing data for correct classification
-cl_2 = zeros(1, 2); % Vector containing labels for correct classification
-% For the label-matrix: First is the true label, the second is the
-% predicted label for each value
+
+% Used in 1NN-classification
+% w_2 & c_2 : Number of wrong and correct classifications
+% cm_2 : Confusion-matrix
+% wd_2 & wl_2 : Array containing data and labels respectively for wrongly classified images
+% cd_2 & cl_2 : Same as the above, only with correctly classified images
+% The label matrices contain [True label, Predicted label]
+[w_2, c_2, cm_2, wd_2, wl_2, cd_2, cl_2] = deal(0, 0, zeros(10, 10), zeros(1, vec_size), zeros(1, 2), zeros(1, vec_size), zeros(1, 2));
+
+% 7-NN classifier:
+[w_2_7, c_2_7, cm_2_7, wd_2_7, wl_2_7, cd_2_7, cl_2_7] = deal(0, 0, zeros(10, 10), zeros(1, vec_size), zeros(1, 2), zeros(1, vec_size), zeros(1, 2));
+
 size_bulk = 999; % 1000 - 1 (needs to be removed)
 for i = 1:(num_test/(size_bulk+1))
     % Splitting the testing-sets into 'bulks' of 1000 elements, calculating
@@ -118,12 +124,15 @@ for i = 1:(num_test/(size_bulk+1))
     disp("Calculating distances");
     distances_clustering = calculate_distance(testing_data, new_training_set);
     disp("Classifying");
-%     [cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2] = classify_1NN(distances_clustering, number_of_tests, testing_data, testing_labels, training_labels, cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2);
-    [cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2] = classify_kNN(distances_clustering, number_of_tests, testing_data, testing_labels, training_labels, cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2, 7);
-%     [cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2] = classify_1NN(distances_clustering, number_of_tests, testing_data, testing_labels, training_labels, cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2);
+    
+    % 1-NN classifier
+    [cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2] = classify_1NN(distances_clustering, number_of_tests, testing_data, testing_labels, training_labels, cm_2, wd_2, wl_2, w_2, cd_2, cl_2, c_2);
+    % 7-NN classifier
+    [cm_2_7, wd_2_7, wl_2_7, w_2_7, cd_2_7, cl_2_7, c_2_7] = classify_kNN(distances_clustering, number_of_tests, testing_data, testing_labels, training_labels, cm_2_7, wd_2_7, wl_2_7, w_2_7, cd_2_7, cl_2_7, c_2_7, 7);
 end
 
 error_rate_2 = w_2/num_test;
+error_rate_2_7 = w_2_7/num_test;
     
 disp("Ending task 2");
 disp("-----------------------");
@@ -145,8 +154,8 @@ function [cm, wd, wl, w, cd, cl, c] = classify_kNN(distances_set, num_test, test
             min_labels(y) = training_labels(indices(y));
         end
 
-        pl = mode(min_labels); % Finding the predicted label
-        tl = test_labels(l);
+        pl = mode(min_labels); % Finding the predicted label (Most frequent of the 7 labels)
+        tl = test_labels(l); % Finding the true label
         
         cm(tl+1, pl+1) = cm(tl+1, pl+1) + 1; % Updating confusion matrix
 
