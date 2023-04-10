@@ -175,9 +175,9 @@ for i in range(N):
 
 def plot_histograms(features, title):
     plt.figure()
-    plt.hist(features[0], bins=18, label='Setosa')
-    plt.hist(features[1], bins=18, label='Versicolor')
-    plt.hist(features[2], bins=18, label='Virginica')
+    plt.hist(features[0], bins=20, label='Setosa')
+    plt.hist(features[1], bins=20, label='Versicolor')
+    plt.hist(features[2], bins=20, label='Virginica')
     plt.xlabel('Size (cm)')
     plt.ylabel('Frequency')
     plt.title(title)
@@ -219,6 +219,7 @@ def three_features():
     confusion_matrix_3_features, wrong_3_features = testing(testing_set_3_features, weight_3_features)
     print(f"Confusion matrix for 3 features:\n{confusion_matrix_3_features}")
     print(f"Wrong predictions for 3 features: {wrong_3_features}")
+    print(f"Error rate: {wrong_3_features/len(testing_set_3_features)}\n")
 
 ### ------------------------------
 
@@ -246,6 +247,7 @@ def two_features():
     confusion_matrix_2_features, wrong_2_features = testing(testing_set_2_features, weight_2_features)
     print(f"Confusion matrix for 2 features:\n{confusion_matrix_2_features}")
     print(f"Wrong predictions for 2 features: {wrong_2_features}")
+    print(f"Error rate: {wrong_2_features/len(testing_set_2_features)}\n")
 
 ### ------------------------------
 
@@ -273,6 +275,7 @@ def one_feature():
     confusion_matrix_1_features, wrong_1_features = testing(testing_set_1_features, weight_1_features)
     print(f"Confusion matrix for 1 feature:\n{confusion_matrix_1_features}")
     print(f"Wrong predictions for 1 feature: {wrong_1_features}")
+    print(f"Error rate: {wrong_1_features/len(testing_set_1_features)}\n")
 
 ### ------------------------------
 

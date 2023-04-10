@@ -1,5 +1,5 @@
-% load('data_all.mat')
-% load('../../Project_Files/distances.mat')
+load('data_all.mat')
+load('../../Project_Files/distances.mat')
 
 
 %%%------------------------------------
@@ -12,23 +12,30 @@ disp("-----------------------");
 disp("Beginning task 1");
 
 % Task 1 variables
-w_1 = 0; % Amount of wrong classification
-c_1 = 0; % Amount of correct classification
+% w_1 = 0; % Amount of wrong classification
+% c_1 = 0; % Amount of correct classification
+% 
+% cm_1 = zeros(10, 10); % Confusion-matrix (0-9 digits -> 10 classes)
+% 
+% wd_1 = zeros(1, vec_size); % Vector containing data for wrong classification
+% wl_1 = zeros(1, 2); % Vector containing labels for wrong classification
+% cd_1 = zeros(1, vec_size); % Vector containing data for correct classification
+% cl_1 = zeros(1, 2); % Vector containing labels for correct classification
+% % For the label-matrix: First is the true label, the second is the
+% % predicted label for each value
 
-cm_1 = zeros(10, 10); % Confusion-matrix (0-9 digits -> 10 classes)
-
-wd_1 = zeros(1, vec_size); % Vector containing data for wrong classification
-wl_1 = zeros(1, 2); % Vector containing labels for wrong classification
-cd_1 = zeros(1, vec_size); % Vector containing data for correct classification
-cl_1 = zeros(1, 2); % Vector containing labels for correct classification
-% For the label-matrix: First is the true label, the second is the
-% predicted label for each value
+% w_1 & c_1 : Number of wrong and correct classifications
+% cm_1 : Confusion-matrix
+% wd_1 & wl_1 : Array containing data and labels respectively for wrongly classified images
+% cd_1 & cl_1 : Same as the above, only with correctly 
+[w_1, c_1, cm_1, wd_1, wl_1, cd_1, cl_1] = deal(0, 0, zeros(10, 10), zeros(1, vec_size), zeros(1, 2), zeros(1, vec_size), zeros(1, 2));
 
 size_bulk = 999; % 1000 - 1 (needs to be removed)
 for i = 1:(num_test/size_bulk)
     % Splitting the testing-sets into 'bulks' of 1000 elements, calculating
     % distances for each of these sets. Adding all togheter to a new matrix
-    distances_sets = zeros(num_train, size_bulk+1); 
+%     distances_sets = zeros(num_train, size_bulk+1); 
+    distances_set = distances(:, i:i+size_bulk);
     testing_data = testv(i:i+size_bulk, :);
     testing_labels = testlab(i:i+size_bulk, :);
     [number_of_tests, ~] = size(testing_data);
@@ -38,6 +45,7 @@ for i = 1:(num_test/size_bulk)
     % Classifying entire test-set at once
 %     [cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1] = classify_1NN(distances(:, i:i+size_bulk), number_of_tests, testing_data, testing_labels, trainlab, cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1);
 %     [cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1] = classify_1NN(distances_sets, number_of_tests, testing_data, testing_labels, trainlab, cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1);
+    [cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1] = classify_kNN(distances_set, number_of_tests, testing_data, testing_labels, trainlab, cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1, 7);
 end
 
 % Plot one wrongly classified and one correctly classified

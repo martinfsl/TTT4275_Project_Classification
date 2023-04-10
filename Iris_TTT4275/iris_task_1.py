@@ -170,7 +170,9 @@ def training_30_first_samples():
 
     print("Using first 30 samples for training, 20 last samples for testing")
     print(f"Wrong: {wrong}, Total: {len(testing_set)}")
-    print(f"Confusion matrix: \n{confusion_matrix}\n")
+    print(f"Confusion matrix: \n{confusion_matrix}")
+    error_rate = wrong/len(testing_set)
+    print(f"Error rate: {error_rate}\n")
 
 
 # Using the last 30 samples for training and the first 20 for testing
@@ -193,7 +195,9 @@ def training_30_last_samples():
 
     print("Using last 30 samples for training, 20 first samples for testing")
     print(f"Wrong: {wrong}, Total: {len(testing_set)}")
-    print(f"Confusion matrix: \n{confusion_matrix}\n")
+    print(f"Confusion matrix: \n{confusion_matrix}")
+    error_rate = wrong/len(testing_set)
+    print(f"Error rate: {error_rate}\n")
 
 training_30_first_samples()
 training_30_last_samples()
