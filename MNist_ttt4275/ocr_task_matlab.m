@@ -1,7 +1,7 @@
-% disp("Loading data:");
-%load('data_all.mat')
-% disp("Loading pre-saved distances:");
-%load('../../Project_Files/distances.mat')
+disp("Loading data");
+load('data_all.mat')
+% disp("Loading pre-saved distances");
+% load('../../Project_Files/distances.mat')
 
 
 %%%------------------------------------
@@ -72,31 +72,19 @@ disp("Beginning task 2");
 disp("Sorting & Clustering");
 
 % Creating vectors to hold all training data of one class
-[trainv0, trainv1, trainv2, trainv3, trainv4, trainv5, trainv6, trainv7, trainv8, trainv9] = sorting(trainv, trainlab, num_train, vec_size);
+% [trainv0, trainv1, trainv2, trainv3, trainv4, trainv5, trainv6, trainv7, trainv8, trainv9] = sorting(trainv, trainlab, num_train, vec_size);
+
+% Returns a 1x10 cell
+% Each element, f. ex. trainv_sorted{1} contains all the data with label 0 (digit 0)
+trainv_sorted = sorting(trainv, trainlab, num_train, vec_size);
 
 M = 64;
-[~, C0] = kmeans(trainv0, M);
-[~, C1] = kmeans(trainv1, M);
-[~, C2] = kmeans(trainv2, M);
-[~, C3] = kmeans(trainv3, M);
-[~, C4] = kmeans(trainv4, M);
-[~, C5] = kmeans(trainv5, M);
-[~, C6] = kmeans(trainv6, M);
-[~, C7] = kmeans(trainv7, M);
-[~, C8] = kmeans(trainv8, M);
-[~, C9] = kmeans(trainv9, M);
-
 new_training_set = zeros(10*M, vec_size);
-new_training_set(1:1*M, :) = C0;
-new_training_set(1*M+1:2*M, :) = C1;
-new_training_set(2*M+1:3*M, :) = C2;
-new_training_set(3*M+1:4*M, :) = C3;
-new_training_set(4*M+1:5*M, :) = C4;
-new_training_set(5*M+1:6*M, :) = C5;
-new_training_set(6*M+1:7*M, :) = C6;
-new_training_set(7*M+1:8*M, :) = C7;
-new_training_set(8*M+1:9*M, :) = C8;
-new_training_set(9*M+1:10*M, :) = C9;
+
+for i = 0:9
+   [~, Ci] = kmeans(trainv_sorted{i+1}, M);
+   new_training_set(i*M+1:(i+1)*M, :) = Ci;
+end
 
 % Task 2 variables
 
@@ -133,7 +121,7 @@ end
 
 error_rate_2 = w_2/num_test;
 error_rate_2_7 = w_2_7/num_test;
-    
+
 disp("Ending task 2");
 disp("-----------------------");
 
@@ -215,39 +203,47 @@ function distances_return = calculate_distance(test_set, templates)
     distances_return = dist(templates, transpose(test_set));
 end
 
-function [s0, s1, s2, s3, s4, s5, s6, s7, s8, s9] = sorting(training_data, training_label, num_train, vec_size)
-    s0 = zeros(0, vec_size);
-    s1 = zeros(0, vec_size);
-    s2 = zeros(0, vec_size);
-    s3 = zeros(0, vec_size);
-    s4 = zeros(0, vec_size);
-    s5 = zeros(0, vec_size);
-    s6 = zeros(0, vec_size);
-    s7 = zeros(0, vec_size);
-    s8 = zeros(0, vec_size);
-    s9 = zeros(0, vec_size);
-    
+% function [s0, s1, s2, s3, s4, s5, s6, s7, s8, s9] = sorting(training_data, training_label, num_train, vec_size)
+function s = sorting(training_data, training_label, num_train, vec_size)
+%     s0 = zeros(0, vec_size);
+%     s1 = zeros(0, vec_size);
+%     s2 = zeros(0, vec_size);
+%     s3 = zeros(0, vec_size);
+%     s4 = zeros(0, vec_size);
+%     s5 = zeros(0, vec_size);
+%     s6 = zeros(0, vec_size);
+%     s7 = zeros(0, vec_size);
+%     s8 = zeros(0, vec_size);
+%     s9 = zeros(0, vec_size);
+%     
+%     for j = 1:num_train
+%         if training_label(j) == 0
+%            s0(end+1, :) = training_data(j, :);
+%         elseif training_label(j) == 1
+%            s1(end+1, :) = training_data(j, :);
+%         elseif training_label(j) == 2
+%            s2(end+1, :) = training_data(j, :);
+%         elseif training_label(j) == 3
+%            s3(end+1, :) = training_data(j, :);
+%         elseif training_label(j) == 4
+%            s4(end+1, :) = training_data(j, :);
+%         elseif training_label(j) == 5
+%            s5(end+1, :) = training_data(j, :);
+%         elseif training_label(j) == 6
+%            s6(end+1, :) = training_data(j, :);
+%         elseif training_label(j) == 7
+%            s7(end+1, :) = training_data(j, :);
+%         elseif training_label(j) == 8
+%            s8(end+1, :) = training_data(j, :);
+%         elseif training_label(j) == 9
+%            s9(end+1, :) = training_data(j, :);
+%         end
+%         disp(j);
+%     end
+
+    s = {zeros(0, vec_size), zeros(0, vec_size), zeros(0, vec_size), zeros(0, vec_size), zeros(0, vec_size), zeros(0, vec_size), zeros(0, vec_size), zeros(0, vec_size), zeros(0, vec_size), zeros(0, vec_size)};
     for j = 1:num_train
-        if training_label(j) == 0
-           s0(end+1, :) = training_data(j, :);
-        elseif training_label(j) == 1
-           s1(end+1, :) = training_data(j, :);
-        elseif training_label(j) == 2
-           s2(end+1, :) = training_data(j, :);
-        elseif training_label(j) == 3
-           s3(end+1, :) = training_data(j, :);
-        elseif training_label(j) == 4
-           s4(end+1, :) = training_data(j, :);
-        elseif training_label(j) == 5
-           s5(end+1, :) = training_data(j, :);
-        elseif training_label(j) == 6
-           s6(end+1, :) = training_data(j, :);
-        elseif training_label(j) == 7
-           s7(end+1, :) = training_data(j, :);
-        elseif training_label(j) == 8
-           s8(end+1, :) = training_data(j, :);
-        elseif training_label(j) == 9
-           s9(end+1, :) = training_data(j, :);
-        end
+        s{training_label(j)+1}(end+1, :) = training_data(j, :);
+        disp(j);
     end
 end

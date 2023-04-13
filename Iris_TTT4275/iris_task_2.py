@@ -8,36 +8,45 @@ N_CLASSES = 3
 N_FEATURES = 4
 N = 50
 
-# Load the data for the Iris Setosa class
+# Old way to load data:
+# # Load the data for the Iris Setosa class
+# # The data lines are stores in the order: sepal length, sepal width, petal length, petal width - All in cm
+# with open("Iris_TTT4275/class_1") as f:
+#     setosa_data = f.read().splitlines()
+# with open("Iris_TTT4275/class_2") as f:
+#     versicolor_data = f.read().splitlines()
+# with open("Iris_TTT4275/class_3") as f:
+#     virginica_data = f.read().splitlines()
+
+# setosa = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
+# for flower in setosa_data:
+#     flower = flower.split(',')
+#     setosa.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
+
+# versicolor = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
+# for flower in versicolor_data:
+#     flower = flower.split(',')
+#     versicolor.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
+
+# virginica = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
+# for flower in virginica_data:
+#     flower = flower.split(',')
+#     virginica.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
+
+# # Collecting all the samples in one list (Used for normalization)
+# all_samples = []
+# for i in range(N):
+#     all_samples.append(setosa[i])
+#     all_samples.append(versicolor[i])
+#     all_samples.append(virginica[i])
+
+# Load the data for the Iris classes
 # The data lines are stores in the order: sepal length, sepal width, petal length, petal width - All in cm
-with open("Iris_TTT4275/class_1") as f:
-    setosa_data = f.read().splitlines()
-with open("Iris_TTT4275/class_2") as f:
-    versicolor_data = f.read().splitlines()
-with open("Iris_TTT4275/class_3") as f:
-    virginica_data = f.read().splitlines()
+setosa = np.genfromtxt("Iris_TTT4275/class_1", delimiter=",")
+versicolor = np.genfromtxt("Iris_TTT4275/class_2", delimiter=",")
+virginica = np.genfromtxt("Iris_TTT4275/class_3", delimiter=",")
 
-setosa = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
-for flower in setosa_data:
-    flower = flower.split(',')
-    setosa.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
-
-versicolor = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
-for flower in versicolor_data:
-    flower = flower.split(',')
-    versicolor.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
-
-virginica = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
-for flower in virginica_data:
-    flower = flower.split(',')
-    virginica.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
-
-# Collecting all the samples in one list (Used for normalization)
-all_samples = []
-for i in range(N):
-    all_samples.append(setosa[i])
-    all_samples.append(versicolor[i])
-    all_samples.append(virginica[i])
+all_samples = np.vstack((setosa, versicolor, virginica))
 
 '''
 Ex. of finding the max and min of a specific feature
@@ -106,29 +115,22 @@ def training(set_for_training, M = 5000, alpha = 0.3):
     w0 = np.random.random(N_CLASSES) # Bias
     # The discriminant vector will be [W w0][x^T 1]^T
     w_matrix_bias = [w_matrix, w0]
-
     for m in range(M):
         np.random.shuffle(set_for_training) # Randomize the training set for each iteration
         mse_matrix_gradient = [np.zeros((N_CLASSES, len(set_for_training[0][0]))), np.zeros(N_CLASSES)] # MSE for the three classes and all features
-        
         # Training the network for all training inputs, shuffled
         for data in set_for_training:
             t = T[data[1]]
             x = data[0]
             x_with_bias = [np.transpose(x), 1]
-
             z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
             g = 1/(1+np.exp(-z))
             u = np.multiply(np.multiply((g-t), g), (1-g))
             e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
-
             mse_matrix_gradient[0] += e[0] # Adding the error of the weights
             mse_matrix_gradient[1] += e[1] # Adding the error of the bias
-
         w_matrix_bias[0] = w_matrix_bias[0] - alpha*mse_matrix_gradient[0]
         w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
-
-        #print(f"Iteration: {m+1}")
     return w_matrix_bias
 
 ### ------------------------------

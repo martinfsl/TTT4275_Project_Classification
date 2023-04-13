@@ -63,4 +63,4 @@ def test(samples, templates):
         i += 1
     #return wrong
 
-test(testing[0:500], training)
+test(testing[0:25], training)
