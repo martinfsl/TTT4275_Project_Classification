@@ -42,7 +42,7 @@ normalization(virginica, all_samples)
 ### ------------------------------
 ### ------------------------------
 
-def plotting(setosa_set, versicolor_set, virginica_set, title1, title2):
+def plotting(setosa_set, versicolor_set, virginica_set, title1, title2, name1, name2):
     # Plotting the sepal length vs. sepal width for the three classes
     plt.figure(1)
     plt.plot([x[0] for x in setosa_set], [x[1] for x in setosa_set], 'ro', label='Setosa')
@@ -53,6 +53,7 @@ def plotting(setosa_set, versicolor_set, virginica_set, title1, title2):
     #plt.title('Sepal length vs. sepal width')
     plt.title(title1)
     plt.legend(['Setosa', 'Versicolor', 'Virginica'])
+    plt.savefig('Plots/Iris_Foerste_Utkast/' + name1 + ".png")
 
     # Plotting the petal length vs. petal width for the three classes
     plt.figure(2)
@@ -64,11 +65,11 @@ def plotting(setosa_set, versicolor_set, virginica_set, title1, title2):
     #plt.title('Petal length vs. petal width')
     plt.title(title2)
     plt.legend(['Setosa', 'Versicolor', 'Virginica'])
-
+    plt.savefig('Plots/Iris_Foerste_Utkast/' + name2 + ".png")
     plt.show()
 
-#plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
-#plotting(setosa_unormalized, versicolor_unormalized, virginica_unormalized, 'Sepal length vs. sepal width', 'Petal length vs. petal width')
+# plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width', 'sepal_l_vs_sepal_w_normalized', 'petal_l_vs_petal_w_normalized')
+# plotting(setosa_unormalized, versicolor_unormalized, virginica_unormalized, 'Sepal length vs. sepal width', 'Petal length vs. petal width', 'sepal_l_vs_sepal_w_unormalized', 'petal_l_vs_petal_w_unormalized')
 
 ### ------------------------------
 ### Task 1b
@@ -145,6 +146,26 @@ def training_30_first_samples():
     error_rate = wrong/len(testing_set)
     print(f"Error rate: {error_rate}\n")
 
+    # Plotting the confusion matrix
+    fig, ax = plt.subplots()
+    im = ax.imshow(confusion_matrix, cmap="Reds")
+    ax.set_xticks(np.arange(N_CLASSES))
+    ax.set_yticks(np.arange(N_CLASSES))
+    ax.set_xticklabels(["Setosa", "Versicolor", "Virginica"])
+    ax.set_yticklabels(["Setosa", "Versicolor", "Virginica"])
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+                rotation_mode="anchor")
+    for i in range(N_CLASSES):
+        for j in range(N_CLASSES):
+            text = ax.text(j, i, confusion_matrix[i, j],
+                        ha="center", va="center", color="black")
+    ax.set_title("Confusion matrix when using the first 30 samples for training")
+    ax.set_xlabel("Predicted class")
+    ax.set_ylabel("True class")
+    fig.tight_layout()
+    plt.savefig("Plots/Iris_Foerste_Utkast/Confusion_matrix_30_first_samples.png")
+    plt.show()
+
 
 # Using the last 30 samples for training and the first 20 for testing
 def training_30_last_samples():
@@ -169,6 +190,26 @@ def training_30_last_samples():
     print(f"Confusion matrix: \n{confusion_matrix}")
     error_rate = wrong/len(testing_set)
     print(f"Error rate: {error_rate}\n")
+
+        # Plotting the confusion matrix
+    fig, ax = plt.subplots()
+    im = ax.imshow(confusion_matrix, cmap="Reds")
+    ax.set_xticks(np.arange(N_CLASSES))
+    ax.set_yticks(np.arange(N_CLASSES))
+    ax.set_xticklabels(["Setosa", "Versicolor", "Virginica"])
+    ax.set_yticklabels(["Setosa", "Versicolor", "Virginica"])
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+                rotation_mode="anchor")
+    for i in range(N_CLASSES):
+        for j in range(N_CLASSES):
+            text = ax.text(j, i, confusion_matrix[i, j],
+                        ha="center", va="center", color="black")
+    ax.set_title("Confusion matrix when using the last 30 samples for training")
+    ax.set_xlabel("Predicted class")
+    ax.set_ylabel("True class")
+    fig.tight_layout()
+    plt.savefig("Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_samples.png")
+    plt.show()
 
 training_30_first_samples()
 training_30_last_samples()
