@@ -122,6 +122,27 @@ def testing(testing_set, weights):
             wrong += 1
     return confusion_matrix, wrong
 
+def plotting_confusion_matrix(confusion_matrix, title, name):
+    # Plotting the confusion matrix
+    fig, ax = plt.subplots()
+    im = ax.imshow(confusion_matrix, cmap="seismic")
+    ax.set_xticks(np.arange(N_CLASSES))
+    ax.set_yticks(np.arange(N_CLASSES))
+    ax.set_xticklabels(["Setosa", "Versicolor", "Virginica"])
+    ax.set_yticklabels(["Setosa", "Versicolor", "Virginica"])
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+                rotation_mode="anchor")
+    for i in range(N_CLASSES):
+        for j in range(N_CLASSES):
+            text = ax.text(j, i, confusion_matrix[i, j],
+                        ha="center", va="center", color="w")
+    ax.set_title(title)
+    ax.set_xlabel("Predicted class")
+    ax.set_ylabel("True class")
+    fig.tight_layout()
+    plt.savefig(name)
+    plt.show()
+
 # Using the first 30 samples for training and the last 20 for testing
 def training_30_first_samples():
     N_TRAINING = 30
@@ -146,25 +167,7 @@ def training_30_first_samples():
     error_rate = wrong/len(testing_set)
     print(f"Error rate: {error_rate}\n")
 
-    # Plotting the confusion matrix
-    fig, ax = plt.subplots()
-    im = ax.imshow(confusion_matrix, cmap="Reds")
-    ax.set_xticks(np.arange(N_CLASSES))
-    ax.set_yticks(np.arange(N_CLASSES))
-    ax.set_xticklabels(["Setosa", "Versicolor", "Virginica"])
-    ax.set_yticklabels(["Setosa", "Versicolor", "Virginica"])
-    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-                rotation_mode="anchor")
-    for i in range(N_CLASSES):
-        for j in range(N_CLASSES):
-            text = ax.text(j, i, confusion_matrix[i, j],
-                        ha="center", va="center", color="black")
-    ax.set_title("Confusion matrix when using the first 30 samples for training")
-    ax.set_xlabel("Predicted class")
-    ax.set_ylabel("True class")
-    fig.tight_layout()
-    plt.savefig("Plots/Iris_Foerste_Utkast/Confusion_matrix_30_first_samples.png")
-    plt.show()
+    plotting_confusion_matrix(confusion_matrix, "Confusion matrix when using the first 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_first_samples.png")
 
 
 # Using the last 30 samples for training and the first 20 for testing
@@ -191,25 +194,7 @@ def training_30_last_samples():
     error_rate = wrong/len(testing_set)
     print(f"Error rate: {error_rate}\n")
 
-        # Plotting the confusion matrix
-    fig, ax = plt.subplots()
-    im = ax.imshow(confusion_matrix, cmap="Reds")
-    ax.set_xticks(np.arange(N_CLASSES))
-    ax.set_yticks(np.arange(N_CLASSES))
-    ax.set_xticklabels(["Setosa", "Versicolor", "Virginica"])
-    ax.set_yticklabels(["Setosa", "Versicolor", "Virginica"])
-    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
-                rotation_mode="anchor")
-    for i in range(N_CLASSES):
-        for j in range(N_CLASSES):
-            text = ax.text(j, i, confusion_matrix[i, j],
-                        ha="center", va="center", color="black")
-    ax.set_title("Confusion matrix when using the last 30 samples for training")
-    ax.set_xlabel("Predicted class")
-    ax.set_ylabel("True class")
-    fig.tight_layout()
-    plt.savefig("Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_samples.png")
-    plt.show()
+    plotting_confusion_matrix(confusion_matrix, "Confusion matrix when using the last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_samples.png")
 
 training_30_first_samples()
 training_30_last_samples()

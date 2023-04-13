@@ -143,25 +143,47 @@ for i in range(N):
 
 # Plot the histogram for the features of the three classes
 
-def plot_histograms(features, title):
+def plot_histograms(features, title, name):
     plt.figure()
-    plt.hist(features[0], bins=20, label='Setosa')
-    plt.hist(features[1], bins=20, label='Versicolor')
-    plt.hist(features[2], bins=20, label='Virginica')
+    plt.hist(features[0], bins=19, label='Setosa')
+    plt.hist(features[1], bins=19, label='Versicolor')
+    plt.hist(features[2], bins=19, label='Virginica')
     plt.xlabel('Size (cm)')
     plt.ylabel('Frequency')
     plt.title(title)
     plt.legend()
+    plt.savefig(name)
     plt.show()
 
-# plot_histograms([setosa_features[0], versicolor_features[0], virginica_features[0]], 'Sepal length')
-# plot_histograms([setosa_features[1], versicolor_features[1], virginica_features[1]], 'Sepal width')
-# plot_histograms([setosa_features[2], versicolor_features[2], virginica_features[2]], 'Petal length')
-# plot_histograms([setosa_features[3], versicolor_features[3], virginica_features[3]], 'Petal width')
+# plot_histograms([setosa_features[0], versicolor_features[0], virginica_features[0]], 'Sepal length', 'Plots/Iris_Foerste_Utkast/sepallength.png')
+# plot_histograms([setosa_features[1], versicolor_features[1], virginica_features[1]], 'Sepal width', 'Plots/Iris_Foerste_Utkast/sepalwidth.png')
+# plot_histograms([setosa_features[2], versicolor_features[2], virginica_features[2]], 'Petal length', 'Plots/Iris_Foerste_Utkast/petallength.png')
+# plot_histograms([setosa_features[3], versicolor_features[3], virginica_features[3]], 'Petal width', 'Plots/Iris_Foerste_Utkast/petalwidth.png')
 
 N_TRAINING = 30
 
 ### ------------------------------
+
+def plotting_confusion_matrix(confusion_matrix, title, name):
+    # Plotting the confusion matrix
+    fig, ax = plt.subplots()
+    im = ax.imshow(confusion_matrix, cmap="seismic")
+    ax.set_xticks(np.arange(N_CLASSES))
+    ax.set_yticks(np.arange(N_CLASSES))
+    ax.set_xticklabels(["Setosa", "Versicolor", "Virginica"])
+    ax.set_yticklabels(["Setosa", "Versicolor", "Virginica"])
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right",
+                rotation_mode="anchor")
+    for i in range(N_CLASSES):
+        for j in range(N_CLASSES):
+            text = ax.text(j, i, confusion_matrix[i, j],
+                        ha="center", va="center", color="w")
+    ax.set_title(title)
+    ax.set_xlabel("Predicted class")
+    ax.set_ylabel("True class")
+    fig.tight_layout()
+    plt.savefig(name)
+    plt.show()
 
 def three_features():
     # Creating the training and testing sets
@@ -182,6 +204,8 @@ def three_features():
     print(f"Wrong predictions for 3 features: {wrong_3_features}")
     print(f"Error rate: {wrong_3_features/len(testing_set_3_features)}\n")
 
+    plotting_confusion_matrix(confusion_matrix_3_features, "Confusion matrix for 3 features", "Plots/Iris_Foerste_Utkast/confusion_matrix_3_features.png")
+
 ### ------------------------------
 
 def two_features():
@@ -201,6 +225,8 @@ def two_features():
     print(f"Wrong predictions for 2 features: {wrong_2_features}")
     print(f"Error rate: {wrong_2_features/len(testing_set_2_features)}\n")
 
+    plotting_confusion_matrix(confusion_matrix_2_features, "Confusion matrix for 2 features", "Plots/Iris_Foerste_Utkast/confusion_matrix_2_features.png")
+
 ### ------------------------------
 
 def one_feature():
@@ -219,6 +245,8 @@ def one_feature():
     print(f"Confusion matrix for 1 feature:\n{confusion_matrix_1_features}")
     print(f"Wrong predictions for 1 feature: {wrong_1_features}")
     print(f"Error rate: {wrong_1_features/len(testing_set_1_features)}\n")
+
+    plotting_confusion_matrix(confusion_matrix_1_features, "Confusion matrix for 1 feature", "Plots/Iris_Foerste_Utkast/confusion_matrix_1_features.png")
 
 ### ------------------------------
 
