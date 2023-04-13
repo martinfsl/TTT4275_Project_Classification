@@ -8,38 +8,6 @@ N_CLASSES = 3
 N_FEATURES = 4
 N = 50
 
-# Old way to load data:
-# # Load the data for the Iris Setosa class
-# # The data lines are stores in the order: sepal length, sepal width, petal length, petal width - All in cm
-# with open("Iris_TTT4275/class_1") as f:
-#     setosa_data = f.read().splitlines()
-# with open("Iris_TTT4275/class_2") as f:
-#     versicolor_data = f.read().splitlines()
-# with open("Iris_TTT4275/class_3") as f:
-#     virginica_data = f.read().splitlines()
-
-# setosa = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
-# for flower in setosa_data:
-#     flower = flower.split(',')
-#     setosa.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
-
-# versicolor = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
-# for flower in versicolor_data:
-#     flower = flower.split(',')
-#     versicolor.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
-
-# virginica = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
-# for flower in virginica_data:
-#     flower = flower.split(',')
-#     virginica.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
-
-# # Collecting all the samples in one list (Used for normalization)
-# all_samples = []
-# for i in range(N):
-#     all_samples.append(setosa[i])
-#     all_samples.append(versicolor[i])
-#     all_samples.append(virginica[i])
-
 # Load the data for the Iris classes
 # The data lines are stores in the order: sepal length, sepal width, petal length, petal width - All in cm
 setosa = np.genfromtxt("Iris_TTT4275/class_1", delimiter=",")
@@ -196,26 +164,17 @@ N_TRAINING = 30
 ### ------------------------------
 
 def three_features():
+    # Creating the training and testing sets
     # Looks to be a good idea to use the petal length and petal width as features
     # Since we only remove one, sepal length is better than sepal width
+    # Thus we use the elements 0, 2 and 3 of the arrays
+    training_set_3_features = [[setosa_sample, 0] for setosa_sample in setosa[:N_TRAINING, [0, 2, 3]]]
+    training_set_3_features += [[versicolor_sample, 1] for versicolor_sample in versicolor[:N_TRAINING, [0, 2, 3]]]
+    training_set_3_features += [[virginica_sample, 2] for virginica_sample in virginica[:N_TRAINING, [0, 2, 3]]]
 
-    setosa_3_features, versicolor_3_features, virginica_3_features = [], [], []
-
-    for i in range(N):
-        setosa_3_features.append([setosa[i][0], setosa[i][2], setosa[i][3]])
-        versicolor_3_features.append([versicolor[i][0], versicolor[i][2], versicolor[i][3]])
-        virginica_3_features.append([virginica[i][0], virginica[i][2], virginica[i][3]])
-
-    training_set_3_features, testing_set_3_features = [], []
-
-    # Creating the training set
-    for setosa_data in setosa_3_features[:N_TRAINING]: training_set_3_features.append([setosa_data, 0])
-    for versicolor_data in versicolor_3_features[:N_TRAINING]: training_set_3_features.append([versicolor_data, 1])
-    for virginica_data in virginica_3_features[:N_TRAINING]: training_set_3_features.append([virginica_data, 2])
-    # Creating the testing set
-    for setosa_data in setosa_3_features[N_TRAINING:]: testing_set_3_features.append([setosa_data, 0])
-    for versicolor_data in versicolor_3_features[N_TRAINING:]: testing_set_3_features.append([versicolor_data, 1])
-    for virginica_data in virginica_3_features[N_TRAINING:]: testing_set_3_features.append([virginica_data, 2])
+    testing_set_3_features = [[setosa_sample, 0] for setosa_sample in setosa[N_TRAINING:, [0, 2, 3]]]
+    testing_set_3_features += [[versicolor_sample, 1] for versicolor_sample in versicolor[N_TRAINING:, [0, 2, 3]]]
+    testing_set_3_features += [[virginica_sample, 2] for virginica_sample in virginica[N_TRAINING:, [0, 2, 3]]]
 
     weight_3_features = training(training_set_3_features, iterations, learning_rate)
     confusion_matrix_3_features, wrong_3_features = testing(testing_set_3_features, weight_3_features)
@@ -227,23 +186,14 @@ def three_features():
 
 def two_features():
     # Now removing two features (sepal length and sepal width)
-    setosa_2_features, versicolor_2_features, virginica_2_features = [], [], []
+    # Thus we use the elements 2 and 3 of the arrays
+    training_set_2_features = [[setosa_sample, 0] for setosa_sample in setosa[:N_TRAINING, [2, 3]]]
+    training_set_2_features += [[versicolor_sample, 1] for versicolor_sample in versicolor[:N_TRAINING, [2, 3]]]
+    training_set_2_features += [[virginica_sample, 2] for virginica_sample in virginica[:N_TRAINING, [2, 3]]]
 
-    for i in range(N):
-        setosa_2_features.append([setosa[i][2], setosa[i][3]])
-        versicolor_2_features.append([versicolor[i][2], versicolor[i][3]])
-        virginica_2_features.append([virginica[i][2], virginica[i][3]])
-
-    training_set_2_features, testing_set_2_features = [], []
-
-    # Creating the training set
-    for setosa_data in setosa_2_features[:N_TRAINING]: training_set_2_features.append([setosa_data, 0])
-    for versicolor_data in versicolor_2_features[:N_TRAINING]: training_set_2_features.append([versicolor_data, 1])
-    for virginica_data in virginica_2_features[:N_TRAINING]: training_set_2_features.append([virginica_data, 2])
-    # Creating the testing set
-    for setosa_data in setosa_2_features[N_TRAINING:]: testing_set_2_features.append([setosa_data, 0])
-    for versicolor_data in versicolor_2_features[N_TRAINING:]: testing_set_2_features.append([versicolor_data, 1])
-    for virginica_data in virginica_2_features[N_TRAINING:]: testing_set_2_features.append([virginica_data, 2])
+    testing_set_2_features = [[setosa_sample, 0] for setosa_sample in setosa[N_TRAINING:, [2, 3]]]
+    testing_set_2_features += [[versicolor_sample, 1] for versicolor_sample in versicolor[N_TRAINING:, [2, 3]]]
+    testing_set_2_features += [[virginica_sample, 2] for virginica_sample in virginica[N_TRAINING:, [2, 3]]]
 
     weight_2_features = training(training_set_2_features, iterations, learning_rate)
     confusion_matrix_2_features, wrong_2_features = testing(testing_set_2_features, weight_2_features)
@@ -255,23 +205,14 @@ def two_features():
 
 def one_feature():
     # Now only using one feature (petal length)
-    setosa_1_features, versicolor_1_features, virginica_1_features = [], [], []
+    # Thus we use element 2 of the arrays
+    training_set_1_features = [[setosa_sample, 0] for setosa_sample in setosa[:N_TRAINING, [2]]]
+    training_set_1_features += [[versicolor_sample, 1] for versicolor_sample in versicolor[:N_TRAINING, [2]]]
+    training_set_1_features += [[virginica_sample, 2] for virginica_sample in virginica[:N_TRAINING, [2]]]
 
-    for i in range(N):
-        setosa_1_features.append([setosa[i][2]])
-        versicolor_1_features.append([versicolor[i][2]])
-        virginica_1_features.append([virginica[i][2]])
-
-    training_set_1_features, testing_set_1_features = [], []
-
-    # Creating the training set
-    for setosa_data in setosa_1_features[:N_TRAINING]: training_set_1_features.append([setosa_data, 0])
-    for versicolor_data in versicolor_1_features[:N_TRAINING]: training_set_1_features.append([versicolor_data, 1])
-    for virginica_data in virginica_1_features[:N_TRAINING]: training_set_1_features.append([virginica_data, 2])
-    # Creating the testing set
-    for setosa_data in setosa_1_features[N_TRAINING:]: testing_set_1_features.append([setosa_data, 0])
-    for versicolor_data in versicolor_1_features[N_TRAINING:]: testing_set_1_features.append([versicolor_data, 1])
-    for virginica_data in virginica_1_features[N_TRAINING:]: testing_set_1_features.append([virginica_data, 2])
+    testing_set_1_features = [[setosa_sample, 0] for setosa_sample in setosa[N_TRAINING:, [2]]]
+    testing_set_1_features += [[versicolor_sample, 1] for versicolor_sample in versicolor[N_TRAINING:, [2]]]
+    testing_set_1_features += [[virginica_sample, 2] for virginica_sample in virginica[N_TRAINING:, [2]]]
 
     weight_1_features = training(training_set_1_features, iterations, learning_rate)
     confusion_matrix_1_features, wrong_1_features = testing(testing_set_1_features, weight_1_features)

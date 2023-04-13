@@ -1,0 +1,19 @@
+This is to use if we see that the new way to read the data doesn't work as expected
+
+setosa_3_features, versicolor_3_features, virginica_3_features = [], [], []
+
+    for i in range(N):
+        setosa_3_features.append([setosa[i][0], setosa[i][2], setosa[i][3]])
+        versicolor_3_features.append([versicolor[i][0], versicolor[i][2], versicolor[i][3]])
+        virginica_3_features.append([virginica[i][0], virginica[i][2], virginica[i][3]])
+
+    training_set_3_features, testing_set_3_features = [], []
+
+    # Creating the training set
+    for setosa_data in setosa_3_features[:N_TRAINING]: training_set_3_features.append([setosa_data, 0])
+    for versicolor_data in versicolor_3_features[:N_TRAINING]: training_set_3_features.append([versicolor_data, 1])
+    for virginica_data in virginica_3_features[:N_TRAINING]: training_set_3_features.append([virginica_data, 2])
+    # Creating the testing set
+    for setosa_data in setosa_3_features[N_TRAINING:]: testing_set_3_features.append([setosa_data, 0])
+    for versicolor_data in versicolor_3_features[N_TRAINING:]: testing_set_3_features.append([versicolor_data, 1])
+    for virginica_data in virginica_3_features[N_TRAINING:]: testing_set_3_features.append([virginica_data, 2])

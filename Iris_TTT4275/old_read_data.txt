@@ -1,0 +1,33 @@
+This is to use if we see that the new way to read the data doesn't work as expected
+
+# Old way to load data:
+# # Load the data for the Iris Setosa class
+# # The data lines are stores in the order: sepal length, sepal width, petal length, petal width - All in cm
+# with open("Iris_TTT4275/class_1") as f:
+#     setosa_data = f.read().splitlines()
+# with open("Iris_TTT4275/class_2") as f:
+#     versicolor_data = f.read().splitlines()
+# with open("Iris_TTT4275/class_3") as f:
+#     virginica_data = f.read().splitlines()
+
+# setosa = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
+# for flower in setosa_data:
+#     flower = flower.split(',')
+#     setosa.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
+
+# versicolor = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
+# for flower in versicolor_data:
+#     flower = flower.split(',')
+#     versicolor.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
+
+# virginica = [] # [Sepal length, Sepal width, Petal length, Petal width] for each element
+# for flower in virginica_data:
+#     flower = flower.split(',')
+#     virginica.append([float(flower[0]), float(flower[1]), float(flower[2]), float(flower[3])])
+
+# # Collecting all the samples in one list (Used for normalization)
+# all_samples = []
+# for i in range(N):
+#     all_samples.append(setosa[i])
+#     all_samples.append(versicolor[i])
+#     all_samples.append(virginica[i])

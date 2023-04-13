@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.io as sio
+from scipy.spatial.distance import euclidean
 
 # Dictionary with all the data
 all_data = sio.loadmat('MNist_ttt4275/data_all.mat')
@@ -10,6 +11,7 @@ all_data = sio.loadmat('MNist_ttt4275/data_all.mat')
 COL_SIZE, ROW_SIZE = all_data.get('col_size')[0][0], all_data.get('row_size')[0][0]
 NUM_TEST, NUM_TRAIN = all_data.get('num_test')[0][0], all_data.get('num_train')[0][0]
 N = all_data.get('vec_size')[0][0] # Number of pixels in each image - 784
+
 NUMBERS = 10 # 0-9
 
 # Get the data from the dictionary (all_data)
@@ -24,7 +26,7 @@ def plotting(array, rows = ROW_SIZE, cols = COL_SIZE, title = ""):
     plt.title(title)
     plt.show()
 
-#plotting(train_images[6], row_size, col_size, str(train_labels[6][0]))
+plotting(train_images[9], ROW_SIZE, COL_SIZE, str(train_labels[9][0]))
 
 # Create training and testing data
 training = []
@@ -47,8 +49,9 @@ def classify(sample, templates):
     for template in templates:
         distances.append(calc_distance(sample[0], template[0]))
         #print(distances[-1], template[1])
+
     min_index = np.argmin(distances)
-    #print("Min index: ", min_index)
+    # print("Min index: ", min_index)
     predicted_label = templates[min_index][1]
     return predicted_label
 
@@ -59,8 +62,10 @@ def test(samples, templates):
         predicted_label = classify(sample, templates)
         if predicted_label != sample[1]:
             wrong += 1
-        print(f"Sample {i} - Predicted: {predicted_label}, Actual: {sample[1]}, Wrong: {wrong}")
+        # print(f"Sample {i} - Predicted: {predicted_label}, Actual: {sample[1]}, Wrong: {wrong}")
         i += 1
-    #return wrong
+    # return wrong
 
-test(testing[0:25], training)
+#test(testing[0:5], training)
+
+
