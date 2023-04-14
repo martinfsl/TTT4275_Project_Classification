@@ -159,16 +159,21 @@ def training_30_first_samples():
 
     weights = training(training_set, iterations, learning_rate)
 
-    confusion_matrix, wrong = testing(testing_set, weights)
+    confusion_matrix_testing, wrong_testing = testing(testing_set, weights)
+    confusion_matrix_training, wrong_training = testing(training_set, weights)
 
     print("Using first 30 samples for training, 20 last samples for testing")
-    print(f"Wrong: {wrong}, Total: {len(testing_set)}")
-    print(f"Confusion matrix: \n{confusion_matrix}")
-    error_rate = wrong/len(testing_set)
-    print(f"Error rate: {error_rate}\n")
 
-    plotting_confusion_matrix(confusion_matrix, "Confusion matrix when using the first 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_first_samples.png")
+    # print(f"Wrong: {wrong}, Total: {len(testing_set)}")
+    # print(f"Confusion matrix: \n{confusion_matrix}")
 
+    error_rate_testing = wrong_testing/len(testing_set)
+    error_rate_training = wrong_training/len(training_set)
+    print(f"Error rate for test-set: {error_rate_testing}")
+    print(f"Error rate for training-set: {error_rate_training}\n")
+
+    plotting_confusion_matrix(confusion_matrix_testing, "Confusion matrix for the test-set, first 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_first_testing.png")
+    plotting_confusion_matrix(confusion_matrix_training, "Confusion matrix for the training-set, first 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_first_training.png")
 
 # Using the last 30 samples for training and the first 20 for testing
 def training_30_last_samples():
@@ -186,15 +191,21 @@ def training_30_last_samples():
 
     weights = training(training_set, iterations, learning_rate)
 
-    confusion_matrix, wrong = testing(testing_set, weights)
+    confusion_matrix_testing, wrong_testing = testing(testing_set, weights)
+    confusion_matrix_training, wrong_training = testing(training_set, weights)
 
     print("Using last 30 samples for training, 20 first samples for testing")
-    print(f"Wrong: {wrong}, Total: {len(testing_set)}")
-    print(f"Confusion matrix: \n{confusion_matrix}")
-    error_rate = wrong/len(testing_set)
-    print(f"Error rate: {error_rate}\n")
 
-    plotting_confusion_matrix(confusion_matrix, "Confusion matrix when using the last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_samples.png")
+    # print(f"Wrong: {wrong}, Total: {len(testing_set)}")
+    # print(f"Confusion matrix: \n{confusion_matrix}")
+
+    error_rate_testing = wrong_testing/len(testing_set)
+    error_rate_training = wrong_training/len(training_set)
+    print(f"Error rate for test-set: {error_rate_testing}")
+    print(f"Error rate for training-set: {error_rate_training}\n")
+
+    plotting_confusion_matrix(confusion_matrix_testing, "Confusion matrix for the test-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_testing.png")
+    plotting_confusion_matrix(confusion_matrix_training, "Confusion matrix for the training-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_training.png")
 
 training_30_first_samples()
 training_30_last_samples()

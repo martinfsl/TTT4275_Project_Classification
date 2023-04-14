@@ -26,46 +26,44 @@ def plotting(array, rows = ROW_SIZE, cols = COL_SIZE, title = ""):
     plt.title(title)
     plt.show()
 
-plotting(train_images[9], ROW_SIZE, COL_SIZE, str(train_labels[9][0]))
+# plotting(train_images[9], ROW_SIZE, COL_SIZE, str(train_labels[9][0]))
 
 # Create training and testing data
-training = []
-for i in range(NUM_TRAIN):
-    training.append([train_images[i], train_labels[i][0]])
-testing = []
-for i in range(NUM_TEST):
-    testing.append([test_images[i], test_labels[i][0]])
+# training = []
+# for i in range(NUM_TRAIN):
+#     training.append([train_images[i], train_labels[i][0]])
+# testing = []
+# for i in range(NUM_TEST):
+#     testing.append([test_images[i], test_labels[i][0]])
 
 wrong = []
 i = 0
 
-# Function for calculating the Euclidean distance between two vectors
-def calc_distance(array_a, array_b):
-    distance = np.matmul(np.transpose(np.array(array_a) - np.array(array_b)), (np.array(array_a) - np.array(array_b)))
+# Function for calculating the Euclidean distance between two matrices
+def calc_distance(samples, templates):
+    distance = np.matmul(templates, np.transpose(samples))
     return distance
 
-def classify(sample, templates):
-    distances = []
-    for template in templates:
-        distances.append(calc_distance(sample[0], template[0]))
-        #print(distances[-1], template[1])
-
-    min_index = np.argmin(distances)
-    # print("Min index: ", min_index)
-    predicted_label = templates[min_index][1]
-    return predicted_label
-
-def test(samples, templates):
+def classify(samples, templates):
+    
+    distances = calc_distance(samples, templates)
     wrong = 0
-    i = 0
-    for sample in samples:
-        predicted_label = classify(sample, templates)
-        if predicted_label != sample[1]:
+
+    for i in range(np.shape(samples)[0]):
+        predicted_label = train_labels[np.argmin([np.abs(r[i]) for r in distances])][0]
+        true_label = test_labels[i][0]
+        # print(predicted_label, true_label)
+        if predicted_label != true_label:
             wrong += 1
-        # print(f"Sample {i} - Predicted: {predicted_label}, Actual: {sample[1]}, Wrong: {wrong}")
-        i += 1
-    # return wrong
+    return wrong
+
+def myFunc(samples, templates):
+    s = classify(samples, templates)
+    print(s)
 
 #test(testing[0:5], training)
 
+# Calculate the euclidean distance
+# w = np.matmul(train_images, np.transpose(test_images))
 
+myFunc(test_images[:20], train_images)
