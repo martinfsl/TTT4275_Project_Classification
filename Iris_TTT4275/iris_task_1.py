@@ -102,6 +102,29 @@ def training(set_for_training, M = 5000, alpha = 0.3):
         w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
     return w_matrix_bias
 
+# Training the network but updating the weights and bias after each training input
+def training_v2(set_for_training, M = 5000, alpha = 0.3):
+    # Creating a weighting matrix and a bias vector, starting with random values between 0 and 1
+    w_matrix = np.random.random((N_CLASSES, len(set_for_training[0][0]))) # Weights for the three classes and all features
+    w0 = np.random.random(N_CLASSES) # Bias
+    # The discriminant vector will be [W w0][x^T 1]^T
+    w_matrix_bias = [w_matrix, w0]
+    for m in range(M):
+        np.random.shuffle(set_for_training) # Randomize the training set for each iteration
+        mse_matrix_gradient = [np.zeros((N_CLASSES, len(set_for_training[0][0]))), np.zeros(N_CLASSES)] # MSE for the three classes and all features
+        # Training the network for all training inputs, shuffled
+        for data in set_for_training:
+            t = T[data[1]]
+            x = data[0]
+            x_with_bias = [np.transpose(x), 1]
+            z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
+            g = 1/(1+np.exp(-z))
+            u = np.multiply(np.multiply((g-t), g), (1-g))
+            e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
+            w_matrix_bias[0] = w_matrix_bias[0] - alpha*e[0]
+            w_matrix_bias[1] = w_matrix_bias[1] - alpha*e[1]
+    return w_matrix_bias
+
 ### ------------------------------
 
 # Training the network for all training inputs for M iterations
@@ -157,7 +180,8 @@ def training_30_first_samples():
     for versicolor_data in versicolor[N_TRAINING:]: testing_set.append([versicolor_data, 1])
     for virginica_data in virginica[N_TRAINING:]: testing_set.append([virginica_data, 2])
 
-    weights = training(training_set, iterations, learning_rate)
+    # weights = training(training_set, iterations, learning_rate)
+    weights = training_v2(training_set, iterations, learning_rate)
 
     confusion_matrix_testing, wrong_testing = testing(testing_set, weights)
     confusion_matrix_training, wrong_training = testing(training_set, weights)
@@ -165,15 +189,16 @@ def training_30_first_samples():
     print("Using first 30 samples for training, 20 last samples for testing")
 
     # print(f"Wrong: {wrong}, Total: {len(testing_set)}")
-    # print(f"Confusion matrix: \n{confusion_matrix}")
+    print(f"Confusion matrix for test-set: \n{confusion_matrix_testing}")
+    print(f"Confusion matrix for train-set: \n{confusion_matrix_training}")
 
     error_rate_testing = wrong_testing/len(testing_set)
     error_rate_training = wrong_training/len(training_set)
     print(f"Error rate for test-set: {error_rate_testing}")
     print(f"Error rate for training-set: {error_rate_training}\n")
 
-    plotting_confusion_matrix(confusion_matrix_testing, "Confusion matrix for the test-set, first 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_first_testing.png")
-    plotting_confusion_matrix(confusion_matrix_training, "Confusion matrix for the training-set, first 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_first_training.png")
+    # plotting_confusion_matrix(confusion_matrix_testing, "Confusion matrix for the test-set, first 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_first_testing.png")
+    # plotting_confusion_matrix(confusion_matrix_training, "Confusion matrix for the training-set, first 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_first_training.png")
 
 # Using the last 30 samples for training and the first 20 for testing
 def training_30_last_samples():
@@ -189,7 +214,8 @@ def training_30_last_samples():
     for versicolor_data in versicolor[:N_TESTING]: testing_set.append([versicolor_data, 1])
     for virginica_data in virginica[:N_TESTING]: testing_set.append([virginica_data, 2])
 
-    weights = training(training_set, iterations, learning_rate)
+    # weights = training(training_set, iterations, learning_rate)
+    weights = training_v2(training_set, iterations, learning_rate)
 
     confusion_matrix_testing, wrong_testing = testing(testing_set, weights)
     confusion_matrix_training, wrong_training = testing(training_set, weights)
@@ -197,15 +223,16 @@ def training_30_last_samples():
     print("Using last 30 samples for training, 20 first samples for testing")
 
     # print(f"Wrong: {wrong}, Total: {len(testing_set)}")
-    # print(f"Confusion matrix: \n{confusion_matrix}")
+    print(f"Confusion matrix for test-set: \n{confusion_matrix_testing}")
+    print(f"Confusion matrix for train-set: \n{confusion_matrix_training}")
 
     error_rate_testing = wrong_testing/len(testing_set)
     error_rate_training = wrong_training/len(training_set)
     print(f"Error rate for test-set: {error_rate_testing}")
     print(f"Error rate for training-set: {error_rate_training}\n")
 
-    plotting_confusion_matrix(confusion_matrix_testing, "Confusion matrix for the test-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_testing.png")
-    plotting_confusion_matrix(confusion_matrix_training, "Confusion matrix for the training-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_training.png")
+    # plotting_confusion_matrix(confusion_matrix_testing, "Confusion matrix for the test-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_testing.png")
+    # plotting_confusion_matrix(confusion_matrix_training, "Confusion matrix for the training-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_training.png")
 
 training_30_first_samples()
 training_30_last_samples()
