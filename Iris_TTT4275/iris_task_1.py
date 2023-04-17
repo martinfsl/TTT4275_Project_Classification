@@ -80,7 +80,7 @@ T = [[1, 0, 0],
 
 def training(set_for_training, M = 5000, alpha = 0.3):
     # Creating a weighting matrix and a bias vector, starting with random values between 0 and 1
-    w_matrix = np.random.random((N_CLASSES, len(set_for_training[0][0]))) # Weights for the three classes and all features
+    w_matrix = np.random.random((N_CLASSES, len(set_for_training[0][0]))) # Weights
     w0 = np.random.random(N_CLASSES) # Bias
     # The discriminant vector will be [W w0][x^T 1]^T
     w_matrix_bias = [w_matrix, w0]
@@ -92,8 +92,9 @@ def training(set_for_training, M = 5000, alpha = 0.3):
             t = T[data[1]]
             x = data[0]
             x_with_bias = [np.transpose(x), 1]
-            z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
-            g = 1/(1+np.exp(-z))
+            # z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
+            # g = 1/(1+np.exp(-z))
+            g = sigmoid(np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1])
             u = np.multiply(np.multiply((g-t), g), (1-g))
             e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
             mse_matrix_gradient[0] += e[0] # Adding the error of the weights
@@ -105,25 +106,22 @@ def training(set_for_training, M = 5000, alpha = 0.3):
 # Training the network but updating the weights and bias after each training input
 def training_v2(set_for_training, M = 5000, alpha = 0.3):
     # Creating a weighting matrix and a bias vector, starting with random values between 0 and 1
-    w_matrix = np.random.random((N_CLASSES, len(set_for_training[0][0]))) # Weights for the three classes and all features
+    w_matrix = np.random.random((N_CLASSES, len(set_for_training[0][0]))) # Weights
     w0 = np.random.random(N_CLASSES) # Bias
-    # The discriminant vector will be [W w0][x^T 1]^T
-    w_matrix_bias = [w_matrix, w0]
     for m in range(M):
         np.random.shuffle(set_for_training) # Randomize the training set for each iteration
-        mse_matrix_gradient = [np.zeros((N_CLASSES, len(set_for_training[0][0]))), np.zeros(N_CLASSES)] # MSE for the three classes and all features
         # Training the network for all training inputs, shuffled
         for data in set_for_training:
             t = T[data[1]]
             x = data[0]
-            x_with_bias = [np.transpose(x), 1]
-            z = np.matmul(w_matrix_bias[0], np.transpose(x_with_bias[0])) + w_matrix_bias[1]*x_with_bias[1]
-            g = 1/(1+np.exp(-z))
+            g = sigmoid(np.matmul(w_matrix, np.transpose(x)) + w0)
             u = np.multiply(np.multiply((g-t), g), (1-g))
-            e = [np.outer(u, x_with_bias[0]), u*x_with_bias[1]]
-            w_matrix_bias[0] = w_matrix_bias[0] - alpha*e[0]
-            w_matrix_bias[1] = w_matrix_bias[1] - alpha*e[1]
-    return w_matrix_bias
+            w_matrix -= alpha*np.outer(u, x) # Updating the weights with the error of the weights
+            w0 -= alpha*u # Updating the bias with the error of the bias
+    return [w_matrix, w0]
+
+def sigmoid(x):
+    return 1/(1+np.exp(-x))
 
 ### ------------------------------
 
@@ -181,14 +179,13 @@ def training_30_first_samples():
     for virginica_data in virginica[N_TRAINING:]: testing_set.append([virginica_data, 2])
 
     # weights = training(training_set, iterations, learning_rate)
-    weights = training_v2(training_set, iterations, learning_rate)
+    weights = training_v2(training_set, iterations, 0.5)
 
     confusion_matrix_testing, wrong_testing = testing(testing_set, weights)
     confusion_matrix_training, wrong_training = testing(training_set, weights)
 
     print("Using first 30 samples for training, 20 last samples for testing")
 
-    # print(f"Wrong: {wrong}, Total: {len(testing_set)}")
     print(f"Confusion matrix for test-set: \n{confusion_matrix_testing}")
     print(f"Confusion matrix for train-set: \n{confusion_matrix_training}")
 
@@ -214,7 +211,6 @@ def training_30_last_samples():
     for versicolor_data in versicolor[:N_TESTING]: testing_set.append([versicolor_data, 1])
     for virginica_data in virginica[:N_TESTING]: testing_set.append([virginica_data, 2])
 
-    # weights = training(training_set, iterations, learning_rate)
     weights = training_v2(training_set, iterations, learning_rate)
 
     confusion_matrix_testing, wrong_testing = testing(testing_set, weights)
@@ -234,5 +230,5 @@ def training_30_last_samples():
     # plotting_confusion_matrix(confusion_matrix_testing, "Confusion matrix for the test-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_testing.png")
     # plotting_confusion_matrix(confusion_matrix_training, "Confusion matrix for the training-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_training.png")
 
-training_30_first_samples()
-training_30_last_samples()
+# training_30_first_samples()
+# training_30_last_samples()

@@ -101,6 +101,26 @@ def training(set_for_training, M = 5000, alpha = 0.3):
         w_matrix_bias[1] = w_matrix_bias[1] - alpha*mse_matrix_gradient[1]
     return w_matrix_bias
 
+# Training the network but updating the weights and bias after each training input
+def training_v2(set_for_training, M = 5000, alpha = 0.3):
+    # Creating a weighting matrix and a bias vector, starting with random values between 0 and 1
+    w_matrix = np.random.random((N_CLASSES, len(set_for_training[0][0]))) # Weights
+    w0 = np.random.random(N_CLASSES) # Bias
+    for m in range(M):
+        np.random.shuffle(set_for_training) # Randomize the training set for each iteration
+        # Training the network for all training inputs, shuffled
+        for data in set_for_training:
+            t = T[data[1]]
+            x = data[0]
+            g = sigmoid(np.matmul(w_matrix, np.transpose(x)) + w0)
+            u = np.multiply(np.multiply((g-t), g), (1-g))
+            w_matrix -= alpha*np.outer(u, x) # Updating the weights with the error of the weights
+            w0 -= alpha*u # Updating the bias with the error of the bias
+    return [w_matrix, w0]
+
+def sigmoid(x):
+    return 1/(1+np.exp(-x))
+
 ### ------------------------------
 
 # Training the network for all training inputs for M iterations
@@ -126,20 +146,27 @@ def testing(testing_set, weights):
 ### ------------------------------
 # First 30 samples for training, last 20 samples for testing
 
-# Getting all features into one array
-setosa_features = np.zeros((4, N)) # [[all sepal length], [all sepal width], [all petal length], [all petal width]]
-versicolor_features = np.zeros((4, N))
-virginica_features = np.zeros((4, N))
+def separating_and_plotting():
+    # Getting all features into one array
+    setosa_features = np.zeros((4, N)) # [[all sepal length], [all sepal width], [all petal length], [all petal width]]
+    versicolor_features = np.zeros((4, N))
+    virginica_features = np.zeros((4, N))
 
-for i in range(N):
-    setosa_features[0][i], setosa_features[1][i] = setosa_unormalized[i][0], setosa_unormalized[i][1]
-    setosa_features[2][i], setosa_features[3][i] = setosa_unormalized[i][2], setosa_unormalized[i][3]
+    for i in range(N):
+        setosa_features[0][i], setosa_features[1][i] = setosa_unormalized[i][0], setosa_unormalized[i][1]
+        setosa_features[2][i], setosa_features[3][i] = setosa_unormalized[i][2], setosa_unormalized[i][3]
 
-    versicolor_features[0][i], versicolor_features[1][i] = versicolor_unormalized[i][0], versicolor_unormalized[i][1]
-    versicolor_features[2][i], versicolor_features[3][i] = versicolor_unormalized[i][2], versicolor_unormalized[i][3]
+        versicolor_features[0][i], versicolor_features[1][i] = versicolor_unormalized[i][0], versicolor_unormalized[i][1]
+        versicolor_features[2][i], versicolor_features[3][i] = versicolor_unormalized[i][2], versicolor_unormalized[i][3]
 
-    virginica_features[0][i], virginica_features[1][i] = virginica_unormalized[i][0], virginica_unormalized[i][1]
-    virginica_features[2][i], virginica_features[3][i] = virginica_unormalized[i][2], virginica_unormalized[i][3]
+        virginica_features[0][i], virginica_features[1][i] = virginica_unormalized[i][0], virginica_unormalized[i][1]
+        virginica_features[2][i], virginica_features[3][i] = virginica_unormalized[i][2], virginica_unormalized[i][3]
+
+    plot_histograms([setosa_features[0], versicolor_features[0], virginica_features[0]], 'Sepal length', 'Plots/Iris_Foerste_Utkast/sepallength.png')
+    plot_histograms([setosa_features[1], versicolor_features[1], virginica_features[1]], 'Sepal width', 'Plots/Iris_Foerste_Utkast/sepalwidth.png')
+    plot_histograms([setosa_features[2], versicolor_features[2], virginica_features[2]], 'Petal length', 'Plots/Iris_Foerste_Utkast/petallength.png')
+    plot_histograms([setosa_features[3], versicolor_features[3], virginica_features[3]], 'Petal width', 'Plots/Iris_Foerste_Utkast/petalwidth.png')
+
 
 # Plot the histogram for the features of the three classes
 
@@ -154,11 +181,6 @@ def plot_histograms(features, title, name):
     plt.legend()
     plt.savefig(name)
     plt.show()
-
-# plot_histograms([setosa_features[0], versicolor_features[0], virginica_features[0]], 'Sepal length', 'Plots/Iris_Foerste_Utkast/sepallength.png')
-# plot_histograms([setosa_features[1], versicolor_features[1], virginica_features[1]], 'Sepal width', 'Plots/Iris_Foerste_Utkast/sepalwidth.png')
-# plot_histograms([setosa_features[2], versicolor_features[2], virginica_features[2]], 'Petal length', 'Plots/Iris_Foerste_Utkast/petallength.png')
-# plot_histograms([setosa_features[3], versicolor_features[3], virginica_features[3]], 'Petal width', 'Plots/Iris_Foerste_Utkast/petalwidth.png')
 
 N_TRAINING = 30
 
@@ -198,7 +220,9 @@ def three_features():
     testing_set_3_features += [[versicolor_sample, 1] for versicolor_sample in versicolor[N_TRAINING:, [0, 2, 3]]]
     testing_set_3_features += [[virginica_sample, 2] for virginica_sample in virginica[N_TRAINING:, [0, 2, 3]]]
 
-    weight_3_features = training(training_set_3_features, iterations, learning_rate)
+    # weight_3_features = training(training_set_3_features, iterations, learning_rate)
+    weight_3_features = training_v2(training_set_3_features, iterations, learning_rate)
+
     confusion_matrix_3_features, wrong_3_features = testing(testing_set_3_features, weight_3_features)
     print(f"Confusion matrix for 3 features:\n{confusion_matrix_3_features}")
     print(f"Wrong predictions for 3 features: {wrong_3_features}")
@@ -219,7 +243,9 @@ def two_features():
     testing_set_2_features += [[versicolor_sample, 1] for versicolor_sample in versicolor[N_TRAINING:, [2, 3]]]
     testing_set_2_features += [[virginica_sample, 2] for virginica_sample in virginica[N_TRAINING:, [2, 3]]]
 
-    weight_2_features = training(training_set_2_features, iterations, learning_rate)
+    # weight_2_features = training(training_set_2_features, iterations, learning_rate)
+    weight_2_features = training_v2(training_set_2_features, iterations, learning_rate)
+
     confusion_matrix_2_features, wrong_2_features = testing(testing_set_2_features, weight_2_features)
     print(f"Confusion matrix for 2 features:\n{confusion_matrix_2_features}")
     print(f"Wrong predictions for 2 features: {wrong_2_features}")
@@ -240,7 +266,9 @@ def one_feature():
     testing_set_1_features += [[versicolor_sample, 1] for versicolor_sample in versicolor[N_TRAINING:, [2]]]
     testing_set_1_features += [[virginica_sample, 2] for virginica_sample in virginica[N_TRAINING:, [2]]]
 
-    weight_1_features = training(training_set_1_features, iterations, learning_rate)
+    # weight_1_features = training(training_set_1_features, iterations, learning_rate)
+    weight_1_features = training_v2(training_set_1_features, iterations, learning_rate)
+
     confusion_matrix_1_features, wrong_1_features = testing(testing_set_1_features, weight_1_features)
     print(f"Confusion matrix for 1 feature:\n{confusion_matrix_1_features}")
     print(f"Wrong predictions for 1 feature: {wrong_1_features}")
