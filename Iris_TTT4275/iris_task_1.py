@@ -108,16 +108,34 @@ def training_v2(set_for_training, M = 5000, alpha = 0.3):
     # Creating a weighting matrix and a bias vector, starting with random values between 0 and 1
     w_matrix = np.random.random((N_CLASSES, len(set_for_training[0][0]))) # Weights
     w0 = np.random.random(N_CLASSES) # Bias
+
+    # Array that holds the MSE for an entire iteration through the training set
+    # Used for plotting
+    mse_array = []
+    
     for m in range(M):
         np.random.shuffle(set_for_training) # Randomize the training set for each iteration
+        mse = 0
         # Training the network for all training inputs, shuffled
         for data in set_for_training:
             t = T[data[1]]
             x = data[0]
             g = sigmoid(np.matmul(w_matrix, np.transpose(x)) + w0)
             u = np.multiply(np.multiply((g-t), g), (1-g))
+
+            # Adding up the MSE for every training sample
+            mse += np.linalg.norm(0.5*np.transpose(g-t)*(g-t))
+
             w_matrix -= alpha*np.outer(u, x) # Updating the weights with the error of the weights
             w0 -= alpha*u # Updating the bias with the error of the bias
+        
+        # Adding MSE for this iteration to an array
+        mse_array.append(mse)
+    
+    # Plotting the MSE
+    plt.plot(mse_array)
+    plt.show()
+
     return [w_matrix, w0]
 
 def sigmoid(x):
@@ -128,6 +146,7 @@ def sigmoid(x):
 # Training the network for all training inputs for M iterations
 iterations = 3000
 learning_rate = 0.3
+# learning_rate = 0.025
 
 def testing(testing_set, weights):
     confusion_matrix = np.zeros((N_CLASSES, N_CLASSES))
@@ -230,5 +249,5 @@ def training_30_last_samples():
     # plotting_confusion_matrix(confusion_matrix_testing, "Confusion matrix for the test-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_testing.png")
     # plotting_confusion_matrix(confusion_matrix_training, "Confusion matrix for the training-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_training.png")
 
-# training_30_first_samples()
+training_30_first_samples()
 # training_30_last_samples()
