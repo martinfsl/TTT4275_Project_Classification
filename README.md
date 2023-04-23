@@ -17,7 +17,7 @@ This task consists of two parts:
 
 2. task:
 
-Second task is creating a classifier that can classify a digit givena 28x28 pixel-array with grey-scaled values which represents a handwritten number.
+Second task is creating a classifier that can classify a digit given a 28x28 pixel-array with grey-scaled values which represents a handwritten number.
 
 This task also consists of two parts:
 * For the first part, the whole training set is used at templates.

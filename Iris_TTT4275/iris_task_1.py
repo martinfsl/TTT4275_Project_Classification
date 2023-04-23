@@ -126,48 +126,58 @@ def sigmoid(x):
     return 1/(1+np.exp(-x))
 
 # Training the network but updating the weights and bias after each training input
-def training_w_threshold(set_for_training, M = 5000, alpha = 0.3):
-    # Creating a weighting matrix and a bias vector, starting with random values between 0 and 1
-    w_matrix = np.random.random((N_CLASSES, len(set_for_training[0][0]))) # Weights
-    w0 = np.random.random(N_CLASSES) # Bias
+def training_w_threshold(set_for_training, M = 5000, alphas = [0.02]):
+    mse_arrays = []
+    for alpha in alphas:
+        # Creating a weighting matrix and a bias vector, starting with random values between 0 and 1
+        w_matrix = np.random.random((N_CLASSES, len(set_for_training[0][0]))) # Weights
+        w0 = np.random.random(N_CLASSES) # Bias
 
-    # Array that holds the MSE for an entire iteration through the training set
-    # Used for plotting
-    mse_array = []
+        # Array that holds the MSE for an entire iteration through the training set
+        # Used for plotting
+        mse_array = []
 
-    threshold = 7.5
-    
-    i = 0
-
-    # for m in range(M):
-    while(True):
-        np.random.shuffle(set_for_training) # Randomize the training set for each iteration
-        mse = 0
-        # Training the network for all training inputs, shuffled
-        for data in set_for_training:
-            t = T[data[1]]
-            x = data[0]
-            g = sigmoid(np.matmul(w_matrix, np.transpose(x)) + w0)
-            u = np.multiply(np.multiply((g-t), g), (1-g))
-
-            # Adding up the MSE for every training sample
-            mse += np.linalg.norm(0.5*np.transpose(g-t)*(g-t))
-
-            w_matrix -= alpha*np.outer(u, x) # Updating the weights with the error of the weights
-            w0 -= alpha*u # Updating the bias with the error of the bias
+        threshold = 7.5
         
-        # Adding MSE for this iteration to an array
-        mse_array.append(mse)
+        i = 0
+
+        for m in range(M):
+        # while(True):
+            np.random.shuffle(set_for_training) # Randomize the training set for each iteration
+            mse = 0
+            # Training the network for all training inputs, shuffled
+            for data in set_for_training:
+                t = T[data[1]]
+                x = data[0]
+                g = sigmoid(np.matmul(w_matrix, np.transpose(x)) + w0)
+                u = np.multiply(np.multiply((g-t), g), (1-g))
+
+                # Adding up the MSE for every training sample
+                mse += np.linalg.norm(0.5*np.transpose(g-t)*(g-t))
+
+                w_matrix -= alpha*np.outer(u, x) # Updating the weights with the error of the weights
+                w0 -= alpha*u # Updating the bias with the error of the bias
+            
+            # Adding MSE for this iteration to an array
+            mse_array.append(mse)
+
+        mse_arrays.append([mse_array, alpha])
+            
+        #     i += 1
+
+        #     if (mse < threshold):
+        #         break
         
-        i += 1
+        # print(i)
 
-        if (mse < threshold):
-            break
-    
-    print(i)
-
-    # Plotting the MSE
-    plt.plot(mse_array)
+    # Plotting the MSE for all learning rates
+    for i in range(len(mse_arrays)):
+        plt.plot(mse_arrays[i][0], label=str(mse_arrays[i][1]))
+    plt.title("MSE for different learning rates")
+    plt.legend()
+    plt.ylabel("MSE")
+    plt.xlabel("Iteration")
+    plt.savefig("Plots/Iris_Foerste_Utkast/mse_learning_rates.png")
     plt.show()
 
     return [w_matrix, w0]
@@ -176,7 +186,7 @@ def training_w_threshold(set_for_training, M = 5000, alpha = 0.3):
 
 # Training the network for all training inputs for M iterations
 # iterations = 3000
-iterations = 3000
+iterations = 2000
 learning_rate = 0.3
 # learning_rate = 0.025
 
@@ -230,7 +240,9 @@ def training_30_first_samples():
     for virginica_data in virginica[N_TRAINING:]: testing_set.append([virginica_data, 2])
 
     # weights = training(training_set, iterations, learning_rate)
-    weights = training_v2(training_set, iterations, 0.5)
+    weights = training_v2(training_set, iterations, learning_rate)
+    # alphas = [0.0025, 0.005, 0.25, 0.3, 0.6, 1, 1.3]
+    # weights = training_w_threshold(training_set, iterations, alphas)
 
     confusion_matrix_testing, wrong_testing = testing(testing_set, weights)
     confusion_matrix_training, wrong_training = testing(training_set, weights)
