@@ -3,15 +3,16 @@
 % disp("Loading pre-saved distances");
 % load('../../Project_Files/distances.mat')
 
-
 %%%------------------------------------
 %%%------------------------------------
 %%%             TASK 1
 %%%------------------------------------
 %%%------------------------------------
 
-% disp("-----------------------");
-% disp("Beginning task 1");
+disp("-----------------------");
+disp("Beginning task 1");
+
+% % tic
 % 
 % % Initializing task 1 variables
 % 
@@ -32,12 +33,16 @@
 % size_bulk = 999; % 1000 - 1 (needs to be removed to account for indexing)
 % for i = 1:(num_test/size_bulk)
 %     % Splitting the testing-sets into 'bulks' of 1000 elements
-%     testing_data = testv(i:i+size_bulk, :);
-%     testing_labels = testlab(i:i+size_bulk, :);
+%     testing_data = testv(((i-1)*size_bulk+1):((i*size_bulk)+1), :);
+%     testing_labels = testlab(((i-1)*size_bulk+1):((i*size_bulk)+1), :);
+%     
 %     [number_of_tests, ~] = size(testing_data);
 %     % Calculating distances for the bulk of testing data
-%     distances_set = calculate_distance(testing_data, trainv);
+%     % distances_set = calculate_distance(testing_data, trainv);
+%     distances_set = distances(:, ((i-1)*size_bulk+1):(i*size_bulk)+1);
 %     
+%     % The nn variable is an array holding index for the nearest neighbor
+%     % Only used for the 1NN-classifier
 %     % 1-NN classifier:
 %     [cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1, tp_lab_1] = classify_kNN(distances_set, number_of_tests, testing_data, testing_labels, trainlab, cm_1, wd_1, wl_1, w_1, cd_1, cl_1, c_1, 1, tp_lab_1);
 %     % 7-NN classifier:
@@ -49,35 +54,37 @@
 % error_rate_1_7 = w_1_7/num_test;
 % disp("Error-rate for the 7NN-classifier for the unclustered data: " + error_rate_1_7);
 
-% % Plotting the confusion matrices
+% Plotting the confusion matrices
 % plot_confusion_matrix(tp_lab_1, "Confusion matrix for the unclustered data using the 1NN-classifier");
 % pause(5);
 % plot_confusion_matrix(tp_lab_1_7, "Confusion matrix for the unclustered data using the 7NN-classifier");
 % pause(5);
-% 
-% % 1NN
-% % Picking three random correctly classified digits to plot
+
+% 1NN
+% Picking three random correctly classified digits to plot
 % [ri_1_c1, ri_1_c2, ri_1_c3] = deal(randi(length(cl_1), 1), randi(length(cl_1), 1), randi(length(cl_1), 1));
-% labels_c_1 = [cl_1(ri_1_c1, :); cl_1(ri_1_c2, :); cl_1(ri_1_c3, :)];
-% images_c_1 = [cd_1(ri_1_c1, :); cd_1(ri_1_c2, :); cd_1(ri_1_c3, :)];
-% plotting_3_images(images_c_1, labels_c_1, col_size, row_size, 'Three randomly selected correctly classified digits for the 1NN-classifier using unclustered templates');
-% % Picking three random wrongly classified digits to plot
+labels_c_1 = [cl_1(ri_1_c1, :); cl_1(ri_1_c2, :); cl_1(ri_1_c3, :)];
+images_c_1 = [cd_1(ri_1_c1, :); cd_1(ri_1_c2, :); cd_1(ri_1_c3, :)];
+plotting_3_images(images_c_1, labels_c_1, col_size, row_size, 'Three randomly selected correctly classified digits for the 1NN-classifier using unclustered templates');
+% Picking three random wrongly classified digits to plot
 % [ri_1_w1, ri_1_w2, ri_1_w3] = deal(randi(length(wl_1), 1), randi(length(wl_1), 1), randi(length(wl_1), 1));
-% labels_w_1 = [wl_1(ri_1_w1, :); wl_1(ri_1_w2, :); wl_1(ri_1_w3, :)];
-% images_w_1 = [wd_1(ri_1_w1, :); wd_1(ri_1_w2, :); wd_1(ri_1_w3, :)];
+labels_w_1 = [wl_1(ri_1_w1, :); wl_1(ri_1_w2, :); wl_1(ri_1_w3, :)];
+images_w_1 = [wd_1(ri_1_w1, :); wd_1(ri_1_w2, :); wd_1(ri_1_w3, :)];
 % plotting_3_images(images_w_1, labels_w_1, col_size, row_size, 'Three randomly selected wrongly classified digits for the 1NN-classifier using unclustered templates');
-% 
-% % 7NN
-% % Picking three random correctly classified digits to plot
+
+% 7NN
+% Picking three random correctly classified digits to plot
 % [ri_1_c1_7, ri_1_c2_7, ri_1_c3_7] = deal(randi(length(cl_1_7), 1), randi(length(cl_1_7), 1), randi(length(cl_1_7), 1));
-% labels_c_1_7 = [cl_1_7(ri_1_c1_7, :); cl_1_7(ri_1_c2_7, :); cl_1_7(ri_1_c3_7, :)];
-% images_c_1_7 = [cd_1_7(ri_1_c1_7, :); cd_1_7(ri_1_c2_7, :); cd_1_7(ri_1_c3_7, :)];
+labels_c_1_7 = [cl_1_7(ri_1_c1_7, :); cl_1_7(ri_1_c2_7, :); cl_1_7(ri_1_c3_7, :)];
+images_c_1_7 = [cd_1_7(ri_1_c1_7, :); cd_1_7(ri_1_c2_7, :); cd_1_7(ri_1_c3_7+1, :)];
 % plotting_3_images(images_c_1_7, labels_c_1_7, col_size, row_size, 'Three randomly selected correctly classified digits for the 7NN-classifier using unclustered templates');
 % Picking three random wrongly classified digits to plot
-[ri_1_w1_7, ri_1_w2_7, ri_1_w3_7] = deal(randi(length(wl_1_7), 1), randi(length(wl_1_7), 1), randi(length(wl_1_7), 1));
-labels_w_1_7 = [wl_1_7(ri_1_w1_7, :); wl_1_7(ri_1_w2_7, :); wl_1_7(ri_1_w3_7, :)];
-images_w_1_7 = [wd_1_7(ri_1_w1_7, :); wd_1_7(ri_1_w2_7, :); wd_1_7(ri_1_w3_7, :)];
-plotting_3_images(images_w_1_7, labels_w_1_7, col_size, row_size, 'Three randomly selected wrongly classified digits for the 7NN-classifier using unclustered templates');
+% [ri_1_w1_7, ri_1_w2_7, ri_1_w3_7] = deal(randi(length(wl_1_7), 1), randi(length(wl_1_7), 1), randi(length(wl_1_7), 1));
+labels_w_1_7 = [wl_1_7(ri_1_w1_7, :); wl_1_7(ri_1_w2_7-5, :); wl_1_7(ri_1_w3_7, :)];
+images_w_1_7 = [wd_1_7(ri_1_w1_7, :); wd_1_7(ri_1_w2_7-5, :); wd_1_7(ri_1_w3_7, :)];
+% plotting_3_images(images_w_1_7, labels_w_1_7, col_size, row_size, 'Three randomly selected wrongly classified digits for the 7NN-classifier using unclustered templates');
+
+% toc
 
 disp("Ending task 1");
 disp("-----------------------");
@@ -96,7 +103,9 @@ disp("-----------------------");
 
 % disp("-----------------------");
 % disp("Beginning task 2");
-%  
+% 
+% tic
+% 
 % disp("Sorting & Clustering");
 % 
 % % Returns a 1x10 cell
@@ -131,8 +140,8 @@ disp("-----------------------");
 % for i = 1:(num_test/(size_bulk+1))
 %     % Splitting the testing-sets into 'bulks' of 1000 elements, calculating
 %     % distances for each of these sets. Adding all togheter to a new matrix
-%     testing_data = testv(i:i+size_bulk, :);
-%     testing_labels = testlab(i:i+size_bulk, :);
+%     testing_data = testv(((i-1)*size_bulk+1):((i*size_bulk)+1), :);
+%     testing_labels = testlab(((i-1)*size_bulk+1):((i*size_bulk)+1), :);
 %     [number_of_tests, ~] = size(testing_data);
 %     
 %     training_labels = [0*ones(M, 1); 1*ones(M,1); 2*ones(M,1); 3*ones(M,1); 4*ones(M,1); 5*ones(M,1); 6*ones(M,1); 7*ones(M,1); 8*ones(M,1); 9*ones(M,1)];
@@ -150,38 +159,40 @@ disp("-----------------------");
 % error_rate_2_7 = w_2_7/num_test;
 % disp("Error-rate for the 7NN-classifier for the clustered data: " + error_rate_2_7);
 
-% % Plotting the confusion matrices
+% Plotting the confusion matrices
 % plot_confusion_matrix(tp_lab_2, "Confusion matrix for the clustered data using the 1NN-classifier");
 % pause(5);
 % plot_confusion_matrix(tp_lab_2_7, "Confusion matrix for the clustered data using the 7NN-classifier");
 % pause(5);
-% 
-% % 1NN
-% % Picking three random correctly classified digits to plot
+
+% 1NN
+% Picking three random correctly classified digits to plot
 % [ri_2_c1, ri_2_c2, ri_2_c3] = deal(randi(length(cl_2), 1), randi(length(cl_2), 1), randi(length(cl_2), 1));
-% labels_c_2 = [cl_2(ri_2_c1, :); cl_2(ri_2_c2, :); cl_2(ri_2_c3, :)];
-% images_c_2 = [cd_2(ri_2_c1, :); cd_2(ri_2_c2, :); cd_2(ri_2_c3, :)];
+labels_c_2 = [cl_2(ri_2_c1, :); cl_2(ri_2_c2, :); cl_2(ri_2_c3, :)];
+images_c_2 = [cd_2(ri_2_c1, :); cd_2(ri_2_c2, :); cd_2(ri_2_c3, :)];
 % plotting_3_images(images_c_2, labels_c_2, col_size, row_size, 'Three randomly selected correctly classified digits for the 1NN-classifier using clustered templates');
-% % Picking three random wrongly classified digits to plot
+% Picking three random wrongly classified digits to plot
 % [ri_2_w1, ri_2_w2, ri_2_w3] = deal(randi(length(wl_2), 1), randi(length(wl_2), 1), randi(length(wl_2), 1));
-% labels_w_2 = [wl_2(ri_2_w1, :); wl_2(ri_2_w2, :); wl_2(ri_2_w3, :)];
-% images_w_2 = [wd_2(ri_2_w1, :); wd_2(ri_2_w2, :); wd_2(ri_2_w3, :)];
+labels_w_2 = [wl_2(ri_2_w1, :); wl_2(ri_2_w2, :); wl_2(ri_2_w3, :)];
+images_w_2 = [wd_2(ri_2_w1, :); wd_2(ri_2_w2, :); wd_2(ri_2_w3, :)];
 % plotting_3_images(images_w_2, labels_w_2, col_size, row_size, 'Three randomly selected wrongly classified digits for the 1NN-classifier using clustered templates');
-% 
-% % 7NN
-% % Picking three random correctly classified digits to plot
+
+% 7NN
+% Picking three random correctly classified digits to plot
 % [ri_2_c1_7, ri_2_c2_7, ri_2_c3_7] = deal(randi(length(cl_2_7), 1), randi(length(cl_2_7), 1), randi(length(cl_2_7), 1));
-% labels_c_2_7 = [cl_2_7(ri_2_c1_7, :); cl_2_7(ri_2_c2_7, :); cl_2_7(ri_2_c3_7, :)];
-% images_c_2_7 = [cd_2_7(ri_2_c1_7, :); cd_2_7(ri_2_c2_7, :); cd_2_7(ri_2_c3_7, :)];
+labels_c_2_7 = [cl_2_7(ri_2_c1_7, :); cl_2_7(ri_2_c2_7, :); cl_2_7(ri_2_c3_7, :)];
+images_c_2_7 = [cd_2_7(ri_2_c1_7, :); cd_2_7(ri_2_c2_7, :); cd_2_7(ri_2_c3_7, :)];
 % plotting_3_images(images_c_2_7, labels_c_2_7, col_size, row_size, 'Three randomly selected correctly classified digits for the 7NN-classifier using clustered templates');
-% % Picking three random wrongly classified digits to plot
+% Picking three random wrongly classified digits to plot
 % [ri_2_w1_7, ri_2_w2_7, ri_2_w3_7] = deal(randi(length(wl_2_7), 1), randi(length(wl_2_7), 1), randi(length(wl_2_7), 1));
-% labels_w_2_7 = [wl_2_7(ri_2_w1_7, :); wl_2_7(ri_2_w2_7, :); wl_2_7(ri_2_w3_7, :)];
-% images_w_2_7 = [wd_2_7(ri_2_w1_7, :); wd_2_7(ri_2_w2_7, :); wd_2_7(ri_2_w3_7, :)];
+labels_w_2_7 = [wl_2_7(ri_2_w1_7+11, :); wl_2_7(ri_2_w2_7, :); wl_2_7(ri_2_w3_7+6, :)];
+images_w_2_7 = [wd_2_7(ri_2_w1_7+11, :); wd_2_7(ri_2_w2_7, :); wd_2_7(ri_2_w3_7+6, :)];
 % plotting_3_images(images_w_2_7, labels_w_2_7, col_size, row_size, 'Three randomly selected wrongly classified digits for the 7NN-classifier using clustered templates');
-% 
-% disp("Ending task 2");
-% disp("-----------------------");
+
+% toc
+
+disp("Ending task 2");
+disp("-----------------------"); 
 
 %%%------------------------------------
 %%%------------------------------------
