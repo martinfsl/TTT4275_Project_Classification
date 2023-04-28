@@ -36,14 +36,8 @@ normalization(setosa, all_samples)
 normalization(versicolor, all_samples)
 normalization(virginica, all_samples)
 
-### ------------------------------
-### ------------------------------
-### -- Here starts the analysis --
-### ------------------------------
-### ------------------------------
-
 def plotting(setosa_set, versicolor_set, virginica_set, title1, title2, name1, name2):
-    # Plotting the sepal length vs. sepal width for the three classes
+    # Plotting the sepal width vs. petal width for the three classes
     plt.figure(1)
     plt.plot([x[1] for x in setosa_set], [x[3] for x in setosa_set], 'ro', label='Setosa')
     plt.plot([x[1] for x in versicolor_set], [x[3] for x in versicolor_set], 'bo', label='Versicolor')
@@ -51,26 +45,13 @@ def plotting(setosa_set, versicolor_set, virginica_set, title1, title2, name1, n
     plt.xlabel('Petal length (cm)')
     plt.ylabel('Petal width (cm)')
     plt.title('Petal length vs. petal width')
-    # plt.title(title1)
+    plt.title(title1)
     plt.legend(['Setosa', 'Versicolor', 'Virginica'])
-    name = 'petal_l_vs_petal_w_normalized'
-    plt.savefig('Plots/Iris_Features/' + name + ".png")
-
-    # # Plotting the petal length vs. petal width for the three classes
-    # plt.figure(2)
-    # plt.plot([x[2] for x in setosa_set], [x[3] for x in setosa_set], 'ro', label='Setosa')
-    # plt.plot([x[2] for x in versicolor_set], [x[3] for x in versicolor_set], 'bo', label='Versicolor')
-    # plt.plot([x[2] for x in virginica_set], [x[3] for x in virginica_set], 'go', label='Virginica')
-    # plt.xlabel('Petal length (cm)')
-    # plt.ylabel('Petal width (cm)')
-    # #plt.title('Petal length vs. petal width')
-    # plt.title(title2)
-    # plt.legend(['Setosa', 'Versicolor', 'Virginica'])
-    # # plt.savefig('Plots/Iris_Foerste_Utkast/' + name2 + ".png")
-
+    # name = 'petal_l_vs_petal_w_normalized'
+    # plt.savefig('Plots/Iris_Features/' + name + ".png")
     plt.show()
 
-plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width', 'sepal_l_vs_sepal_w_normalized', 'petal_l_vs_petal_w_normalized')
+# plotting(setosa, versicolor, virginica, 'Sepal length vs. sepal width', 'Petal length vs. petal width', 'sepal_l_vs_sepal_w_normalized', 'petal_l_vs_petal_w_normalized')
 # plotting(setosa_unormalized, versicolor_unormalized, virginica_unormalized, 'Sepal length vs. sepal width', 'Petal length vs. petal width', 'sepal_l_vs_sepal_w_unormalized', 'petal_l_vs_petal_w_unormalized')
 
 T = [[1, 0, 0], 
@@ -209,16 +190,16 @@ def training_30_last_samples():
     plotting_confusion_matrix(confusion_matrix_testing, "Confusion matrix for the test-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_testing.png")
     plotting_confusion_matrix(confusion_matrix_training, "Confusion matrix for the training-set, last 30 samples for training", "Plots/Iris_Foerste_Utkast/Confusion_matrix_30_last_training.png")
 
-# training_30_first_samples()
-# training_30_last_samples()
+training_30_first_samples()
+training_30_last_samples()
 
-# print("Finished task 1\n")
+print("Finished task 1\n")
 
 #---------------------------
 # Task 2
 #---------------------------
 
-# print("Starting task 2")
+print("Starting task 2")
 
 def separating_and_plotting():
     # Getting all features into one array
@@ -323,8 +304,8 @@ def one_feature():
 
     plotting_confusion_matrix(confusion_matrix_1_features, "Confusion matrix for 1 feature", "Plots/Iris_Foerste_Utkast/confusion_matrix_1_features.png")
 
-# three_features()
-# two_features()
-# one_feature()
+three_features()
+two_features()
+one_feature()
 
-# print("Finished task 2\n")
+print("Finished task 2\n")

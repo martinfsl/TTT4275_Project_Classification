@@ -1,6 +1,12 @@
 # Project_Classification
 Project in image recognition and classification in the course TTT4275.
 
+To run the code, run the following files:
+For the iris-task, run iris_task_combined.py
+For the digit recognition-task, run ocr_task_matlab.m
+
+####################################################################################
+
 This project consists of two tasks.
 1. Classifier of iris flowers
 2. OCR - Optical Character Recognition
